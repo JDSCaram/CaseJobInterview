@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">IFood 2.0</string>
+
+    <string name="cart">Carrinho de Compras</string>
+</resources>
