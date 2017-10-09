@@ -2,8 +2,6 @@ package com.entrevista.ifood2.presentation.presenter.detail;
 
 import android.support.annotation.NonNull;
 
-import com.entrevista.ifood2.presentation.presenter.BasePresenter;
-
 /**
  * Created by JCARAM on 05/10/2017.
  */
@@ -11,18 +9,20 @@ import com.entrevista.ifood2.presentation.presenter.BasePresenter;
 public class ProductDetailPresenterImpl implements ProductDetailPresenter {
 
 
-    @Override
-    public void setView(@NonNull ProductDetailInteractorView view) {
+    private ProductDetailView mView;
 
+    @Override
+    public void setView(@NonNull ProductDetailView view) {
+        mView = view;
     }
 
     @Override
     public void onDestroy() {
-
+        mView = null;
     }
 
     @Override
     public boolean isViewAttached() {
-        return false;
+        return mView != null;
     }
 }

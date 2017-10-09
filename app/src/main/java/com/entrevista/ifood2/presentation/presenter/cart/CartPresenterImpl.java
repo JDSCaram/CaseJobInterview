@@ -11,7 +11,7 @@ public class CartPresenterImpl implements CartPresenter {
     // TODO: 05/10/2017 : Carrinho deve ser persistido
 
     @Override
-    public void setView(@NonNull CartInteractorView view) {
+    public void setView(@NonNull CartView view) {
 
     }
 

@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.0"
     defaultConfig {
         applicationId "com.entrevista.ifood2"
         minSdkVersion 17
@@ -17,18 +17,42 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    signingConfigs {
+        debug {
+
+        }
+        release {
+
+        }
+    }
+
+    productFlavors {
+        dev {
+            signingConfig signingConfigs.debug;
+            buildConfigField "String", "BASE_URL", '"https://demo1531977.mockable.io/"'
+            applicationIdSuffix ".dev"
+        }
+
+        production {
+            signingConfig signingConfigs.release;
+            buildConfigField "String", "BASE_URL", '"https://demo1531977.mockable.io/"'
+        }
+    }
+
 }
 
 dependencies {
     final RETROFIT_VERSION = '2.3.0'
     final LOMBOK_VERSION = '1.16.18'
-    final SUPPORT_LIBRARY_VERSION = '25.3.1'
+    final SUPPORT_LIBRARY_VERSION = '26.1.0'
     provided 'org.glassfish:javax.annotation:10.0-b28'
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
+    compile 'com.google.android.gms:play-services-location:11.0.4'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile "org.projectlombok:lombok:$LOMBOK_VERSION"
     compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
@@ -48,7 +72,12 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxjava:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
 
+    compile 'com.facebook.fresco:fresco:1.5.0'
+
+    compile "android.arch.persistence.room:runtime:1.0.0-beta2"
+
     compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.1'
 
     testCompile 'junit:junit:4.12'
 }

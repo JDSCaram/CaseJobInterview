@@ -2,5 +2,10 @@
 <resources>
     <color name="colorPrimary">#bb2026</color>
     <color name="colorPrimaryDark">#a01412</color>
-    <color name="colorAccent">#fdfdfe</color>
+    <color name="colorAccent">#a6a6a6</color>
+
+    <color name="subText">#afafaf</color>
+
+    <color name="star_yellow">#f5b225</color>
+    <color name="price">#009c08</color>
 </resources>

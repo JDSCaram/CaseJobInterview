@@ -12,6 +12,6 @@ import lombok.Setter;
  */
 @Getter @Setter
 public class CheckoutResponse implements Serializable{
-    public String status;
-    public String message;
+    private String status;
+    private String message;
 }
