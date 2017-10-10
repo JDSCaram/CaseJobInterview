@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IFood 2.0</string>
+    <string name="app_name">Restaurantes</string>
     <string name="ok">OK</string>
     <string name="cart">Carrinho de Compras</string>
     <string name="gps_permission">GPS Permissão</string>

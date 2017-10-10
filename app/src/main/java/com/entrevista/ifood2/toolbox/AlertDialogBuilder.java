@@ -4,9 +4,6 @@ import android.content.Context;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ProgressBar;
-
-import com.entrevista.ifood2.R;
 
 /**
  * Created by JCARAM on 08/10/2017.

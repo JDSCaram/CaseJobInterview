@@ -174,16 +174,19 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
             mProgress.dismiss();
     }
 
+    @UiThread
     @Override
     public void showMessage(String message) {
         new AlertDialog.Builder(this).setMessage(message).create().show();
     }
 
+    @UiThread
     @Override
     public void showErrorMessage() {
         new AlertDialog.Builder(this).setMessage(getString(R.string.error)).create().show();
     }
 
+    @UiThread
     @Override
     public void showErrorMessage(String msg) {
         new AlertDialog.Builder(this).setMessage(msg).create().show();

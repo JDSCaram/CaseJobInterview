@@ -2,7 +2,6 @@ package com.entrevista.ifood2.presentation.presenter.menu;
 
 import android.support.annotation.NonNull;
 
-import com.entrevista.ifood2.network.ServiceMapper;
 import com.entrevista.ifood2.network.bean.Menu;
 import com.entrevista.ifood2.repository.Repository;
 import com.entrevista.ifood2.repository.RepositoryImpl;

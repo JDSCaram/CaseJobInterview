@@ -17,7 +17,6 @@ import com.entrevista.ifood2.presentation.presenter.restaurants.RestaurantPresen
 import com.entrevista.ifood2.presentation.presenter.restaurants.RestaurantView;
 import com.entrevista.ifood2.presentation.ui.MainActivity;
 import com.entrevista.ifood2.presentation.ui.menu.MenuFragment;
-import com.entrevista.ifood2.network.ServiceFactory;
 import com.entrevista.ifood2.network.bean.Restaurant;
 import com.entrevista.ifood2.repository.RepositoryImpl;
 import com.entrevista.ifood2.repository.data.LocalData;
@@ -44,7 +43,7 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_restaurant, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
         afterViews();
         return view;
     }

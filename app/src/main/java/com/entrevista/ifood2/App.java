@@ -6,8 +6,6 @@ import android.arch.persistence.room.Room;
 import com.entrevista.ifood2.storage.database.AppDataBase;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
-import lombok.Getter;
-
 /**
  * Created by JCARAM on 05/10/2017.
  */

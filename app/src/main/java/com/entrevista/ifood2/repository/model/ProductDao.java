@@ -9,8 +9,6 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import io.reactivex.Observable;
-
 /**
  * Created by JCARAM on 10/10/2017.
  */

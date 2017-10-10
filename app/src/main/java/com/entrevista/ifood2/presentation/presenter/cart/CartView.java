@@ -2,7 +2,6 @@ package com.entrevista.ifood2.presentation.presenter.cart;
 
 import com.entrevista.ifood2.presentation.presenter.BaseView;
 import com.entrevista.ifood2.repository.model.Product;
-import com.entrevista.ifood2.repository.model.Restaurant;
 
 import java.util.List;
 

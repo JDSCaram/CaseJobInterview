@@ -17,7 +17,6 @@ import com.entrevista.ifood2.presentation.presenter.menu.MenuPresenterImpl;
 import com.entrevista.ifood2.presentation.presenter.menu.MenuView;
 import com.entrevista.ifood2.presentation.ui.MainActivity;
 import com.entrevista.ifood2.presentation.ui.detail.DetailActivity;
-import com.entrevista.ifood2.network.ServiceFactory;
 import com.entrevista.ifood2.network.bean.CheckoutRequest;
 import com.entrevista.ifood2.network.bean.Menu;
 import com.entrevista.ifood2.network.bean.Restaurant;

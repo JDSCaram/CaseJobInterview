@@ -1,7 +1,6 @@
 package com.entrevista.ifood2.presentation.ui.cart;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,7 +18,6 @@ import com.entrevista.ifood2.repository.RepositoryImpl;
 import com.entrevista.ifood2.repository.data.LocalData;
 import com.entrevista.ifood2.repository.data.RemoteData;
 import com.entrevista.ifood2.repository.model.Product;
-import com.entrevista.ifood2.repository.model.Restaurant;
 import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
 import com.facebook.drawee.view.SimpleDraweeView;
 

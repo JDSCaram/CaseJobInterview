@@ -57,6 +57,39 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
 
         mView.showProgress();
 
+//        Single<Restaurant> single = repository.beginLocal().getDatabase().restaurantDao()
+//                .getRestaurantByIdObservable((int) checkoutRequest.getRestaurant().getId());
+//
+//        single.subscribeOn(Schedulers.newThread())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new SingleObserver<Restaurant>() {
+//                    @Override
+//                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(@io.reactivex.annotations.NonNull Restaurant restaurant) {
+//                        if (restaurant != null)
+//                            insertRestaurant(checkoutRequest);
+//                        else {
+//                            mView.hideProgress();
+//                            mView.showMessage("Opa! Voce ja tem um produto de outro restaurante em seu carrinho.");
+//
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+//                        insertRestaurant(checkoutRequest);
+//
+//                    }
+//                });
+
+
+    }
+
+    private void insertRestaurant(CheckoutRequest checkoutRequest) {
         if (CollectionUtils.isNotEmpty(checkoutRequest.getMenus())) {
             final List<Product> products = new ArrayList<>();
             final Restaurant restaurant = new Restaurant();
@@ -94,7 +127,7 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
 
                         @Override
                         public void onNext(@io.reactivex.annotations.NonNull Long aLong) {
-                            Log.i(TAG_LOG_PRESENTER, "onNext: N: "+ aLong);
+                            Log.i(TAG_LOG_PRESENTER, "onNext: N: " + aLong);
                         }
 
                         @Override
@@ -108,9 +141,6 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
                             Log.i(TAG_LOG_PRESENTER, "onComplete: ");
                         }
                     });
-
-
-
 
 
             Observable<Long> observable = Observable.fromCallable(new Callable<Long>() {
@@ -148,9 +178,7 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
 
 
         }
-
     }
-
 
 
     public void insertMenuForRestaurantInCart(final Restaurant restaurant, List<Product> products) {

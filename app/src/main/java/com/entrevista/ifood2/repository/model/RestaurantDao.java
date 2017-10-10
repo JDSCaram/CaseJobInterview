@@ -9,7 +9,8 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import io.reactivex.Observable;
+import io.reactivex.Single;
+
 
 /**
  * Created by JCARAM on 10/10/2017.
@@ -29,8 +30,11 @@ public interface RestaurantDao {
     @Query("SELECT * FROM restaurant")
     public List<Restaurant> getAllRestaurant();
 
-    @Query("SELECT * FROM restaurant WHERE id = :id LIMIT 1")
+    @Query("SELECT * FROM restaurant WHERE id = :id")
     public Restaurant getRestaurantById(int id);
+
+    @Query("SELECT * FROM restaurant WHERE id = :id")
+    public Single<Restaurant> getRestaurantByIdObservable(int id);
 
     @Delete
     public void deleteRestaurants(Restaurant... restaurants);

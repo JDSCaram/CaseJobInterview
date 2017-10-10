@@ -1,8 +1,5 @@
 package com.entrevista.ifood2.presentation.presenter.restaurants;
 
-import android.location.Location;
-import android.location.LocationListener;
-
 import com.entrevista.ifood2.presentation.presenter.BasePresenter;
 
 /**

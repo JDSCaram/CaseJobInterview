@@ -4,7 +4,6 @@ package com.entrevista.ifood2.presentation.presenter.restaurants;
 import android.support.annotation.NonNull;
 
 
-import com.entrevista.ifood2.network.ServiceMapper;
 import com.entrevista.ifood2.network.bean.Restaurant;
 import com.entrevista.ifood2.repository.Repository;
 import com.entrevista.ifood2.repository.RepositoryImpl;
