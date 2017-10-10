@@ -1,6 +1,4 @@
-package com.entrevista.ifood2.services.bean;
-
-import com.google.gson.annotations.SerializedName;
+package com.entrevista.ifood2.network.bean;
 
 import java.io.Serializable;
 

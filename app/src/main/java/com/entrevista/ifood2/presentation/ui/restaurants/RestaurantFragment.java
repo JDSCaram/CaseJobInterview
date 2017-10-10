@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RatingBar;
 
 import com.entrevista.ifood2.R;
 import com.entrevista.ifood2.presentation.presenter.restaurants.RestaurantPresenter;
@@ -18,8 +17,11 @@ import com.entrevista.ifood2.presentation.presenter.restaurants.RestaurantPresen
 import com.entrevista.ifood2.presentation.presenter.restaurants.RestaurantView;
 import com.entrevista.ifood2.presentation.ui.MainActivity;
 import com.entrevista.ifood2.presentation.ui.menu.MenuFragment;
-import com.entrevista.ifood2.services.ServiceFactory;
-import com.entrevista.ifood2.services.bean.Restaurant;
+import com.entrevista.ifood2.network.ServiceFactory;
+import com.entrevista.ifood2.network.bean.Restaurant;
+import com.entrevista.ifood2.repository.RepositoryImpl;
+import com.entrevista.ifood2.repository.data.LocalData;
+import com.entrevista.ifood2.repository.data.RemoteData;
 import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
 
 import java.util.List;
@@ -52,7 +54,7 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
         mAdapter.setOnItemClickListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(mAdapter);
-        mPresenter = new RestaurantPresenterImpl(ServiceFactory.makeService());
+        mPresenter = new RestaurantPresenterImpl(RepositoryImpl.getInstance(new LocalData(), new RemoteData()));
         mPresenter.setView(this);
     }
 

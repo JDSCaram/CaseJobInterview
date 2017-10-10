@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.entrevista.ifood2.R;
-import com.entrevista.ifood2.services.bean.Menu;
+import com.entrevista.ifood2.network.bean.Menu;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;

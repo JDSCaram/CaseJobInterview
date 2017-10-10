@@ -4,8 +4,10 @@ package com.entrevista.ifood2.presentation.presenter.restaurants;
 import android.support.annotation.NonNull;
 
 
-import com.entrevista.ifood2.services.ServiceMapper;
-import com.entrevista.ifood2.services.bean.Restaurant;
+import com.entrevista.ifood2.network.ServiceMapper;
+import com.entrevista.ifood2.network.bean.Restaurant;
+import com.entrevista.ifood2.repository.Repository;
+import com.entrevista.ifood2.repository.RepositoryImpl;
 
 import java.net.UnknownHostException;
 import java.util.List;
@@ -23,10 +25,10 @@ import io.reactivex.schedulers.Schedulers;
 public class RestaurantPresenterImpl implements RestaurantPresenter{
 
     private RestaurantView mView;
-    public ServiceMapper serviceMapper;
+    public Repository repository;
 
-    public RestaurantPresenterImpl(ServiceMapper serviceMapper) {
-        this.serviceMapper = serviceMapper;
+    public RestaurantPresenterImpl(RepositoryImpl repository) {
+        this.repository = repository;
     }
 
     @Override
@@ -49,7 +51,7 @@ public class RestaurantPresenterImpl implements RestaurantPresenter{
         if (!isViewAttached()) return;
         mView.showProgress();
 
-        Observable<List<Restaurant>> observable  = serviceMapper.getRestaurants(latitude, longitude);
+        Observable<List<Restaurant>> observable  = repository.beginRemote().getServices().getRestaurants(latitude, longitude);
         observable.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<Restaurant>>() {

@@ -3,17 +3,27 @@ package com.entrevista.ifood2.presentation.ui.detail;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.UiThread;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.entrevista.ifood2.R;
-import com.entrevista.ifood2.services.bean.CheckoutRequest;
+import com.entrevista.ifood2.presentation.presenter.detail.ProductDetailPresenter;
+import com.entrevista.ifood2.presentation.presenter.detail.ProductDetailPresenterImpl;
+import com.entrevista.ifood2.presentation.presenter.detail.ProductDetailView;
+import com.entrevista.ifood2.network.bean.CheckoutRequest;
+import com.entrevista.ifood2.repository.RepositoryImpl;
+import com.entrevista.ifood2.repository.data.LocalData;
+import com.entrevista.ifood2.repository.data.RemoteData;
+import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -24,24 +34,24 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements ProductDetailView {
 
+    private static final int QUANTITY_MIN = 1;
     private CheckoutRequest mCheckout;
     private SimpleDraweeView mImage;
-    private AppBarLayout mAppbarLayout;
     private CollapsingToolbarLayout mToolbarLayout;
-    private Toolbar mToolbar;
     private TextView mName, mDescription, mQuantity, mValue, mUnitValue;
     private Button mAddCart;
     private ImageButton mAdd, mRemove;
     private BigDecimal mValues;
-    private double unitValueFixo;
+    private ProductDetailPresenter mPresenter;
+    private AlertDialog mProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        mToolbar = findViewById(R.id.toolbar);
+        Toolbar mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
         Intent i = getIntent();
@@ -55,9 +65,12 @@ public class DetailActivity extends AppCompatActivity {
         mAdd = findViewById(R.id.add);
         mRemove = findViewById(R.id.remove);
         mAddCart = findViewById(R.id.add_cart);
-        mAppbarLayout = findViewById(R.id.app_bar);
+        AppBarLayout mAppbarLayout = findViewById(R.id.app_bar);
         mToolbarLayout = findViewById(R.id.toolbar_layout);
         mUnitValue = findViewById(R.id.unit_value);
+
+        mPresenter = new ProductDetailPresenterImpl(RepositoryImpl.getInstance(new LocalData(), new RemoteData()));
+        mPresenter.setView(this);
 
         mAppbarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
@@ -86,11 +99,12 @@ public class DetailActivity extends AppCompatActivity {
         if (StringUtils.isNotBlank(mCheckout.getMenus().get(0).getDescription())) {
             mDescription.setText(mCheckout.getMenus().get(0).getDescription());
         }
-        unitValueFixo = mCheckout.getMenus().get(0).getPrice();
+        double unitValueFixo = mCheckout.getMenus().get(0).getPrice();
         mValues = BigDecimal.valueOf(mCheckout.getMenus().get(0).getPrice());
         NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
         mValue.setText(format.format(mCheckout.getMenus().get(0).getPrice()));
         mUnitValue.setText(format.format(unitValueFixo));
+        mCheckout.getMenus().get(0).setQuantity(QUANTITY_MIN);
 
         mAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,24 +122,33 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    private void calculeValue(final int quantity) {
-        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-        final String value = format.format(incrementValue(quantity));
-
-        runOnUiThread(new Runnable() {
+        mAddCart.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                mValue.setText(value);
-                if (quantity <= 1)
-                    mQuantity.setText(String.valueOf(1));
-                else {
-                    mQuantity.setText(String.valueOf(quantity));
-                }
+            public void onClick(View view) {
+                addToCart();
             }
         });
 
+    }
+
+    private void addToCart() {
+        if (mCheckout != null)
+            mPresenter.addToCard(mCheckout);
+    }
+
+    @UiThread
+    private void calculeValue(final int quantity) {
+        mCheckout.getMenus().get(0).setQuantity(quantity);
+        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        BigDecimal amount = incrementValue(quantity);
+        mCheckout.getMenus().get(0).setPrice(amount.doubleValue());
+        final String value = format.format(amount);
+        mValue.setText(value);
+        if (quantity <= 1)
+            mQuantity.setText(String.valueOf(1));
+        else {
+            mQuantity.setText(String.valueOf(quantity));
+        }
     }
 
     private BigDecimal incrementValue(int count) {
@@ -134,7 +157,48 @@ public class DetailActivity extends AppCompatActivity {
             return mValues.multiply(quantity);
         else
             return mValues.multiply(BigDecimal.ONE);
+
     }
 
+
+    @Override
+    public void showProgress() {
+        if (mProgress == null)
+            mProgress = AlertDialogBuilder.alertDialogProgress(this, R.layout.progress_dialog);
+        mProgress.show();
+    }
+
+    @Override
+    public void hideProgress() {
+        if (mProgress != null)
+            mProgress.dismiss();
+    }
+
+    @Override
+    public void showMessage(String message) {
+        new AlertDialog.Builder(this).setMessage(message).create().show();
+    }
+
+    @Override
+    public void showErrorMessage() {
+        new AlertDialog.Builder(this).setMessage(getString(R.string.error)).create().show();
+    }
+
+    @Override
+    public void showErrorMessage(String msg) {
+        new AlertDialog.Builder(this).setMessage(msg).create().show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPresenter.onDestroy();
+    }
+
+    @Override
+    public void productAddToCartSuccess() {
+        Toast.makeText(this, R.string.product_add_to_cart, Toast.LENGTH_SHORT).show();
+        finish();
+    }
 
 }

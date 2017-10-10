@@ -7,4 +7,5 @@ import com.entrevista.ifood2.presentation.presenter.BasePresenter;
  */
 
 public interface CartPresenter extends BasePresenter<CartView> {
+    void getProducts();
 }

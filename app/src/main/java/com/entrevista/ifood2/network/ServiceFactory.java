@@ -1,4 +1,4 @@
-package com.entrevista.ifood2.services;
+package com.entrevista.ifood2.network;
 
 import com.entrevista.ifood2.BuildConfig;
 

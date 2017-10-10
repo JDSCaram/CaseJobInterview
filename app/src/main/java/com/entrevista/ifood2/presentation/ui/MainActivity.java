@@ -8,12 +8,14 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 
 import com.entrevista.ifood2.R;
@@ -49,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private GoogleApiClient mGoogleApiClient;
     @Getter
     private Location mCurrentLocation;
+    private TextView cartBadge;
+    private int mValueBadge = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,26 +110,50 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.ifood_menu, menu);
 
-        return super.onCreateOptionsMenu(menu);
+        final MenuItem menuItem = menu.findItem(R.id.cart);
+        View view = menuItem.getActionView();
+        cartBadge = view.findViewById(R.id.cart_badge);
+        initBadge();
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onOptionsItemSelected(menuItem);
+            }
+        });
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.cart: {
                 Intent i = new Intent(MainActivity.this, CartActivity.class);
                 startActivity(i);
                 return false;
             }
-        });
+        }
         return super.onOptionsItemSelected(item);
     }
 
+    @UiThread
+    private void initBadge() {
+        if (cartBadge != null) {
+            if (mValueBadge == 0) {
+                if (cartBadge.getVisibility() != View.GONE) {
+                    cartBadge.setVisibility(View.GONE);
+                }
+            } else {
+                cartBadge.setText(String.valueOf(Math.min(mValueBadge, 99)));
+                if (cartBadge.getVisibility() != View.VISIBLE) {
+                    cartBadge.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    }
 
     private boolean checkPermissions() {
         int permissionState = ActivityCompat.checkSelfPermission(this,

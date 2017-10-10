@@ -1,4 +1,4 @@
-package com.entrevista.ifood2.services.bean;
+package com.entrevista.ifood2.network.bean;
 
 import java.io.Serializable;
 

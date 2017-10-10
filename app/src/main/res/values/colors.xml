@@ -5,6 +5,7 @@
     <color name="colorAccent">#a6a6a6</color>
 
     <color name="subText">#afafaf</color>
+    <color name="divisor">#afafaf</color>
 
     <color name="star_yellow">#f5b225</color>
     <color name="price">#009c08</color>

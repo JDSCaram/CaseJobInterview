@@ -7,5 +7,5 @@ import com.entrevista.ifood2.presentation.presenter.BaseView;
  */
 
 public interface ProductDetailView extends BaseView {
-    //TODO: METODOS DE RETORNO PARA A VIEW
+    void productAddToCartSuccess();
 }

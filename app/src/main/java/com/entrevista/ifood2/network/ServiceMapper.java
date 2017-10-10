@@ -1,10 +1,10 @@
-package com.entrevista.ifood2.services;
+package com.entrevista.ifood2.network;
 
-import com.entrevista.ifood2.services.bean.CheckoutRequest;
-import com.entrevista.ifood2.services.bean.CheckoutResponse;
-import com.entrevista.ifood2.services.bean.Menu;
-import com.entrevista.ifood2.services.bean.PaymentMethod;
-import com.entrevista.ifood2.services.bean.Restaurant;
+import com.entrevista.ifood2.network.bean.CheckoutRequest;
+import com.entrevista.ifood2.network.bean.CheckoutResponse;
+import com.entrevista.ifood2.network.bean.Menu;
+import com.entrevista.ifood2.network.bean.PaymentMethod;
+import com.entrevista.ifood2.network.bean.Restaurant;
 
 
 import java.util.List;

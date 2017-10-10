@@ -1,7 +1,6 @@
 package com.entrevista.ifood2.presentation.ui.restaurants;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
 import android.support.v4.content.ContextCompat;
@@ -13,7 +12,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.entrevista.ifood2.R;
-import com.entrevista.ifood2.services.bean.Restaurant;
+import com.entrevista.ifood2.network.bean.Restaurant;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import org.apache.commons.lang3.StringUtils;

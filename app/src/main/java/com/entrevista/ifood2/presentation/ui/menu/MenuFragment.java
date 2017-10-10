@@ -17,10 +17,13 @@ import com.entrevista.ifood2.presentation.presenter.menu.MenuPresenterImpl;
 import com.entrevista.ifood2.presentation.presenter.menu.MenuView;
 import com.entrevista.ifood2.presentation.ui.MainActivity;
 import com.entrevista.ifood2.presentation.ui.detail.DetailActivity;
-import com.entrevista.ifood2.services.ServiceFactory;
-import com.entrevista.ifood2.services.bean.CheckoutRequest;
-import com.entrevista.ifood2.services.bean.Menu;
-import com.entrevista.ifood2.services.bean.Restaurant;
+import com.entrevista.ifood2.network.ServiceFactory;
+import com.entrevista.ifood2.network.bean.CheckoutRequest;
+import com.entrevista.ifood2.network.bean.Menu;
+import com.entrevista.ifood2.network.bean.Restaurant;
+import com.entrevista.ifood2.repository.RepositoryImpl;
+import com.entrevista.ifood2.repository.data.LocalData;
+import com.entrevista.ifood2.repository.data.RemoteData;
 import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
 
 import java.util.ArrayList;
@@ -43,7 +46,7 @@ public class MenuFragment extends Fragment implements MenuView, MenuAdapter.OnMe
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mPresenter = new MenuPresenterImpl(ServiceFactory.makeService()); //inicializa o mPresenter
+        mPresenter = new MenuPresenterImpl(RepositoryImpl.getInstance(new LocalData(), new RemoteData())); //inicializa o mPresenter
         afterViews();
         return view;
     }

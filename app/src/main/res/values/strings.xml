@@ -7,7 +7,7 @@
     <string name="settings">settings</string>
     <string name="no_location_detected">Não foi possivel recuperar sua localização.</string>
     <string name="error">Erro desconhecido. Por favor tente novamente ou mais tarde.</string>
-    <string name="taxa_entrega">Taxa de Entrega -</string>
+    <string name="delivery_fee">Taxa de Entrega -</string>
     <string name="delivery_free">Gratuito</string>
     <string name="please_wait">Por favor aguarde…</string>
 
@@ -19,4 +19,9 @@
     <string name="quantity">Quantidade</string>
     <string name="adicionar_ao_carrinho">Adicionar ao Carrinho</string>
     <string name="unit_value">Valor Unitário -</string>
+    <string name="product_add_to_cart">Produto inserido ao carrinho com sucesso.</string>
+    <string name="my_cart">Meu carrinho</string>
+    <string name="empty_cart">Seu carrinho está vazio.</string>
+    <string name="total_order">Total do pedido</string>
+    <string name="method_payment">ESCOLHA A FORMA DE PAGAMENTO</string>
 </resources>

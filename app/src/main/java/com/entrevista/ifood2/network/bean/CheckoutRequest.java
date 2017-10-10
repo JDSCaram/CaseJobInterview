@@ -1,4 +1,4 @@
-package com.entrevista.ifood2.services.bean;
+package com.entrevista.ifood2.network.bean;
 
 
 
@@ -6,7 +6,6 @@ package com.entrevista.ifood2.services.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package com.entrevista.ifood2.presentation.presenter.restaurants;
 
 import com.entrevista.ifood2.presentation.presenter.BaseView;
-import com.entrevista.ifood2.services.bean.Restaurant;
+import com.entrevista.ifood2.network.bean.Restaurant;
 
 import java.util.List;
 
