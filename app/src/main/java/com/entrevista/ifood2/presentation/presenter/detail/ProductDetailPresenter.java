@@ -9,4 +9,6 @@ import com.entrevista.ifood2.network.bean.CheckoutRequest;
 
 public interface ProductDetailPresenter extends BasePresenter<ProductDetailView> {
     void addToCard(CheckoutRequest checkoutRequest);
+
+    void cleanCart(CheckoutRequest checkoutRequest);
 }

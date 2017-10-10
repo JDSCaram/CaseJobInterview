@@ -1,5 +1,6 @@
 package com.entrevista.ifood2.presentation.ui.detail;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -199,6 +200,29 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
     public void productAddToCartSuccess() {
         Toast.makeText(this, R.string.product_add_to_cart, Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    @Override
+    public void alreadyExists(final CheckoutRequest checkoutRequest) {
+        AlertDialogBuilder.alertDialogWithButtonConfirmAndCancel(this,
+                getString(R.string.already_exists),
+                getString(R.string.clear),
+                getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPresenter.cleanCart(checkoutRequest);
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).show();
+    }
+
+    @Override
+    public void successCleanCart() {
+        Toast.makeText(this, R.string.success_clean_cart, Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -9,6 +9,7 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 
 /**
@@ -23,17 +24,18 @@ public interface RestaurantDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long insertRestaurant(Restaurant restaurant);
 
-    @Query("SELECT * FROM product WHERE restaurantId IS :restaurantId")
-    public List<Product> getProductsForRestaurant(int restaurantId);
+    @Query("SELECT * FROM Restaurant")
+    Maybe<RestaurantAndProducts> getProductsForRestaurant();
 
-    @Query("SELECT * FROM restaurant")
-    public List<Restaurant> getAllRestaurant();
+    @Query("SELECT * FROM Restaurant")
+    public
+    Maybe<List<Restaurant>> getAllRestaurant();
 
     @Query("SELECT * FROM restaurant WHERE id = :id LIMIT 1")
     public Restaurant getRestaurantById(int id);
 
-    @Delete
-    public void deleteRestaurants(Restaurant... restaurants);
+    @Query("DELETE FROM Restaurant")
+    int deleteAllRestaurants();
 
     @Delete
     int deleteRestaurantById(Restaurant restaurant);

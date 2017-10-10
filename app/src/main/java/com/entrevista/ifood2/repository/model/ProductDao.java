@@ -23,17 +23,14 @@ public interface ProductDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long insertProduct(Product product);
 
-    @Query("SELECT * FROM product WHERE restaurantId IS :restaurantId")
-    public List<Product> getProductsForRestaurant(int restaurantId);
-
-    @Query("SELECT * FROM product")
+    @Query("SELECT * FROM Product")
     public List<Product> getAllProduct();
 
-    @Query("SELECT * FROM product WHERE id = :id LIMIT 1")
+    @Query("SELECT * FROM Product WHERE id = :id LIMIT 1")
     public Product getProductById(int id);
 
-    @Delete
-    public void deleteProducts(Product... products);
+    @Query("DELETE FROM Product")
+    int deleteAllProducts();
 
     @Delete
     int deleteProductById(Product product);

@@ -2,6 +2,7 @@ package com.entrevista.ifood2.presentation.ui.cart;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.UiThread;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import com.entrevista.ifood2.repository.data.LocalData;
 import com.entrevista.ifood2.repository.data.RemoteData;
 import com.entrevista.ifood2.repository.model.Product;
 import com.entrevista.ifood2.repository.model.Restaurant;
+import com.entrevista.ifood2.repository.model.RestaurantAndProducts;
 import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -111,15 +113,16 @@ public class CartActivity extends AppCompatActivity implements CartView {
         mPresenter.onDestroy();
     }
 
+    @UiThread
     @Override
-    public void loadProducts(List<Product> products) {
-        if (CollectionUtils.isNotEmpty(products)) {
+    public void loadProducts(RestaurantAndProducts restaurantAndProducts) {
+        if (CollectionUtils.isEmpty(restaurantAndProducts.products)) {
             mEmptyView.setVisibility(View.VISIBLE);
             mContainerView.setVisibility(View.GONE);
         } else {
             mEmptyView.setVisibility(View.GONE);
             mContainerView.setVisibility(View.VISIBLE);
         }
-        mAdapter.updateList(products);
+        mAdapter.updateList(restaurantAndProducts.products);
     }
 }

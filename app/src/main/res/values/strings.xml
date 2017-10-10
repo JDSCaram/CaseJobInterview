@@ -24,4 +24,8 @@
     <string name="empty_cart">Seu carrinho está vazio.</string>
     <string name="total_order">Total do pedido</string>
     <string name="method_payment">ESCOLHA A FORMA DE PAGAMENTO</string>
+    <string name="already_exists">Já existe no carrinho um produto de outro restaurante. Deseja limpar o carrinho e adiciona-lo?</string>
+    <string name="clear">Limpar</string>
+    <string name="no">Não</string>
+    <string name="success_clean_cart">Carrinho limpo com sucesso.</string>
 </resources>

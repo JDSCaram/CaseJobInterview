@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "com.entrevista.ifood2"
         minSdkVersion 17
@@ -74,6 +74,7 @@ dependencies {
 
     compile 'com.facebook.fresco:fresco:1.5.0'
 
+    compile "android.arch.persistence.room:rxjava2:1.0.0-beta2"
     compile "android.arch.persistence.room:runtime:1.0.0-beta2"
     annotationProcessor 'android.arch.persistence.room:compiler:1.0.0-beta2'
 

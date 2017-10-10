@@ -6,16 +6,20 @@ import android.util.Log;
 import com.entrevista.ifood2.repository.RepositoryImpl;
 import com.entrevista.ifood2.repository.model.Product;
 import com.entrevista.ifood2.repository.model.Restaurant;
+import com.entrevista.ifood2.repository.model.RestaurantAndProducts;
 
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import io.reactivex.Maybe;
+import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -55,73 +59,69 @@ public class CartPresenterImpl implements CartPresenter {
 
         mView.showProgress();
 
-        Observable<List<Restaurant>> observable = Observable.fromCallable(new Callable<List<Restaurant>>() {
-            @Override
-            public List<Restaurant> call() throws Exception {
-                return repository.beginLocal().getDatabase().restaurantDao().getAllRestaurant();
-            }
-        });
-
+        Maybe<RestaurantAndProducts> observable =  repository.beginLocal().getDatabase().restaurantDao().getProductsForRestaurant();
         observable.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<Restaurant>>() {
+                .subscribe(new MaybeObserver<RestaurantAndProducts>() {
                     @Override
                     public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
                     }
 
                     @Override
-                    public void onNext(@io.reactivex.annotations.NonNull List<Restaurant> restaurants) {
-                        if (CollectionUtils.isNotEmpty(restaurants))
-                        getProducts(restaurants);
+                    public void onSuccess(@io.reactivex.annotations.NonNull RestaurantAndProducts restaurantAndProducts) {
+                        mView.hideProgress();
+                        mView.loadProducts(restaurantAndProducts);
                     }
 
                     @Override
                     public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        mView.hideProgress();
-                        Log.e(TAG_LOG_PRESENTER, "onError: ", e );
+
                     }
 
                     @Override
                     public void onComplete() {
+                        mView.hideProgress();
+                        mView.loadProducts(new RestaurantAndProducts());
                     }
                 });
 
     }
 
-    private void getProducts(final List<Restaurant> restaurants){
-
-        Observable<List<Product>> observable = Observable.fromCallable(new Callable<List<Product>>() {
-            @Override
-            public List<Product> call() throws Exception {
-//                return repository.beginLocal().getDatabase().productDao().getProductsForRestaurant(restaurants.get(0).getUid());
-                return repository.beginLocal().getDatabase().productDao().getAllProduct();
-            }
-        });
-
-        observable.subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<Product>>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-                    }
-
-                    @Override
-                    public void onNext(@io.reactivex.annotations.NonNull List<Product> products) {
-                        mView.hideProgress();
-                        if (CollectionUtils.isNotEmpty(products))
-                            mView.loadProducts(products);
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        mView.hideProgress();
-                        Log.e(TAG_LOG_PRESENTER, "onError: ", e );
-                    }
-
-                    @Override
-                    public void onComplete() {
-                    }
-                });
-
-    }
+//    private void getProducts(final Restaurant restaurants){
+//
+//        Observable<List<Product>> observable = Observable.fromCallable(new Callable<List<Product>>() {
+//            @Override
+//            public List<Product> call() throws Exception {
+////                return repository.beginLocal().getDatabase().productDao().getProductsForRestaurant(restaurants.get(0).getUid());
+//                return repository.beginLocal().getDatabase().productDao().getAllProduct();
+//            }
+//        });
+//
+//        observable.subscribeOn(Schedulers.newThread())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Observer<List<Product>>() {
+//                    @Override
+//                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+//                    }
+//
+//                    @Override
+//                    public void onNext(@io.reactivex.annotations.NonNull List<Product> products) {
+//                        mView.hideProgress();
+//                        if (CollectionUtils.isNotEmpty(products))
+//                            mView.loadProducts(products);
+//                    }
+//
+//                    @Override
+//                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+//                        mView.hideProgress();
+//                        Log.e(TAG_LOG_PRESENTER, "onError: ", e );
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//                    }
+//                });
+//
+//    }
 }

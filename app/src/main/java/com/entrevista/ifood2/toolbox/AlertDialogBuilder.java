@@ -1,6 +1,7 @@
 package com.entrevista.ifood2.toolbox;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,19 @@ public class AlertDialogBuilder {
         dialogBuilder.setView(dialogView);
         dialogBuilder.setCancelable(false);
         return dialogBuilder.create();
+    }
+
+    public static AlertDialog alertDialogWithButtonConfirmAndCancel(Context context, String msg,
+                                                                    String buttonConfirmText,
+                                                                    String buttonCancelText,
+                                                                    DialogInterface.OnClickListener onClickListener,
+                                                                    DialogInterface.OnClickListener onCancelListener) {
+        return new AlertDialog.Builder(context)
+                .setMessage(msg)
+                .setCancelable(false)
+                .setNegativeButton(buttonCancelText, onCancelListener)
+                .setPositiveButton(buttonConfirmText, onClickListener)
+                .create();
     }
 
 }

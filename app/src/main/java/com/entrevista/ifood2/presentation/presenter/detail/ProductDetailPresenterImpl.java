@@ -15,10 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import io.reactivex.Maybe;
+import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -56,7 +59,92 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
             return;
 
         mView.showProgress();
+        List<Restaurant> restaurants;
+        //Quando não há nenhum usuario no banco a consulta nao retorna nada Maybe vai pra concluida
+        //Quando existe um usuario no banco, vai pra onSuccess
 
+        Maybe<List<Restaurant>> observable = repository.beginLocal().getDatabase().restaurantDao().getAllRestaurant();
+        observable.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new MaybeObserver<List<Restaurant>>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(@io.reactivex.annotations.NonNull List<Restaurant> restaurants) {
+                        if (isSameRestaurantOrEmpty(restaurants, checkoutRequest)) {
+                            insertRestaurantAndProduct(checkoutRequest);
+                        } else {
+                            mView.hideProgress();
+                            mView.alreadyExists(checkoutRequest);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        insertRestaurantAndProduct(checkoutRequest);
+                    }
+                });
+
+
+    }
+
+    @Override
+    public void cleanCart(CheckoutRequest checkoutRequest) {
+
+        Observable.fromCallable(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                return repository.beginLocal().getDatabase().productDao().deleteAllProducts();
+            }
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(@io.reactivex.annotations.NonNull Integer integer) throws Exception {
+                        Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Produtos: " + integer);
+                    }
+                });
+
+        Observable.fromCallable(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                return repository.beginLocal().getDatabase().restaurantDao().deleteAllRestaurants();
+            }
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(@io.reactivex.annotations.NonNull Integer integer) throws Exception {
+                        Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Restaurante: " + integer);
+                        mView.successCleanCart();
+                    }
+                });
+
+
+    }
+
+    private boolean isSameRestaurantOrEmpty(List<Restaurant> restaurants, CheckoutRequest checkoutRequest) {
+        if (CollectionUtils.isNotEmpty(restaurants)) {
+            for (Restaurant restaurant : restaurants) {
+                if (restaurant.getId() == checkoutRequest.getRestaurant().getId())
+                    return true;
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    private void insertRestaurantAndProduct(CheckoutRequest checkoutRequest) {
         if (CollectionUtils.isNotEmpty(checkoutRequest.getMenus())) {
             final List<Product> products = new ArrayList<>();
             final Restaurant restaurant = new Restaurant();
@@ -78,14 +166,12 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
                         restaurant.getId()));
             }
 
-            Observable<Long> observableProduct = Observable.fromCallable(new Callable<Long>() {
+            Observable.fromCallable(new Callable<Long>() {
                 @Override
                 public Long call() throws Exception {
                     return repository.beginLocal().getDatabase().productDao().insertProduct(products.get(0));
                 }
-            });
-
-            observableProduct.subscribeOn(Schedulers.newThread())
+            }).subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<Long>() {
                         @Override
@@ -94,7 +180,7 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
 
                         @Override
                         public void onNext(@io.reactivex.annotations.NonNull Long aLong) {
-                            Log.i(TAG_LOG_PRESENTER, "onNext: N: "+ aLong);
+                            Log.i(TAG_LOG_PRESENTER, "onNext: N: " + aLong);
                         }
 
                         @Override
@@ -108,9 +194,6 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
                             Log.i(TAG_LOG_PRESENTER, "onComplete: ");
                         }
                     });
-
-
-
 
 
             Observable<Long> observable = Observable.fromCallable(new Callable<Long>() {
@@ -148,15 +231,7 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
 
 
         }
-
     }
 
 
-
-    public void insertMenuForRestaurantInCart(final Restaurant restaurant, List<Product> products) {
-        for (Product item : products) {
-            item.setRestaurantId(restaurant.getId());
-        }
-
-    }
 }
