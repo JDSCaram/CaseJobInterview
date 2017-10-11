@@ -164,6 +164,7 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
                         item.getPrice(),
                         item.getQuantity() == 1 ? item.getPrice() : (item.getPrice() / item.getQuantity()), //valor original
                         item.getImageUrl(),
+                        item.getDescription(),
                         restaurant.getId()));
             }
 

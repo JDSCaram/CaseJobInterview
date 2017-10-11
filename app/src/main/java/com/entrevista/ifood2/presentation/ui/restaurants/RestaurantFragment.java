@@ -74,7 +74,7 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
     @Override
     public void showProgress() {
         if (mProgress == null)
-            mProgress = AlertDialogBuilder.alertDialogProgress(getContext(), R.layout.progress_dialog);
+            mProgress = AlertDialogBuilder.alertDialogProgress(getContext(), R.layout.dialog_progress);
         mProgress.show();
     }
 
@@ -100,7 +100,7 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
     }
 
     @Override
-    public void showTryReconnecting() {
+    public void showTryAgain() {
         AlertDialogBuilder.alertDialogTryAgain(getContext(),
                 getString(R.string.error_connection),
                 getString(R.string.try_again),

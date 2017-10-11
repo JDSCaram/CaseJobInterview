@@ -12,5 +12,5 @@ public interface BaseView<T extends BaseView>{
     void showErrorMessage();
     void showErrorMessage(String msg);
 
-    void showTryReconnecting();
+    void showTryAgain();
 }

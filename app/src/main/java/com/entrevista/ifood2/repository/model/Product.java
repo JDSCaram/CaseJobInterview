@@ -33,16 +33,18 @@ public class Product {
     public String urlImage;
 
     public double unitAmount;
-
+    public String description;
     public int restaurantId;
 
-    public Product(int id, String name, int quantity, double amount, double unitAmount, String urlImage, int restaurantId) {
+    public Product(int id, String name, int quantity, double amount, double unitAmount,
+                   String urlImage, String description,  int restaurantId) {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
         this.amount = amount;
         this.unitAmount = unitAmount;
         this.urlImage = urlImage;
+        this.description = description;
         this.restaurantId = restaurantId;
     }
 

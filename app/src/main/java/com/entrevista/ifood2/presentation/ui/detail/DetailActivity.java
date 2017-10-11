@@ -165,7 +165,7 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
     @Override
     public void showProgress() {
         if (mProgress == null)
-            mProgress = AlertDialogBuilder.alertDialogProgress(this, R.layout.progress_dialog);
+            mProgress = AlertDialogBuilder.alertDialogProgress(this, R.layout.dialog_progress);
         mProgress.show();
     }
 
@@ -191,7 +191,7 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
     }
 
     @Override
-    public void showTryReconnecting() {
+    public void showTryAgain() {
 
     }
 

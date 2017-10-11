@@ -4,13 +4,11 @@ package com.entrevista.ifood2.presentation.presenter.restaurants;
 import android.support.annotation.NonNull;
 
 
-import com.entrevista.ifood2.network.ServiceMapper;
 import com.entrevista.ifood2.network.bean.Restaurant;
 import com.entrevista.ifood2.repository.Repository;
 import com.entrevista.ifood2.repository.RepositoryImpl;
 
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -76,7 +74,7 @@ public class RestaurantPresenterImpl implements RestaurantPresenter {
                         mView.hideProgress();
 
                         if (e instanceof UnknownHostException) {
-                            mView.showTryReconnecting();
+                            mView.showTryAgain();
                         } else {
                             mView.showErrorMessage(e.getMessage());
                         }

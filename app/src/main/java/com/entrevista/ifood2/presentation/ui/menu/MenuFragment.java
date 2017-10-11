@@ -18,7 +18,6 @@ import com.entrevista.ifood2.presentation.presenter.menu.MenuPresenterImpl;
 import com.entrevista.ifood2.presentation.presenter.menu.MenuView;
 import com.entrevista.ifood2.presentation.ui.MainActivity;
 import com.entrevista.ifood2.presentation.ui.detail.DetailActivity;
-import com.entrevista.ifood2.network.ServiceFactory;
 import com.entrevista.ifood2.network.bean.CheckoutRequest;
 import com.entrevista.ifood2.network.bean.Menu;
 import com.entrevista.ifood2.network.bean.Restaurant;
@@ -79,7 +78,7 @@ public class MenuFragment extends Fragment implements MenuView, MenuAdapter.OnMe
     @Override
     public void showProgress() {
         if (mProgress == null)
-            mProgress = AlertDialogBuilder.alertDialogProgress(getContext(), R.layout.progress_dialog);
+            mProgress = AlertDialogBuilder.alertDialogProgress(getContext(), R.layout.dialog_progress);
         mProgress.show();
     }
 
@@ -105,7 +104,7 @@ public class MenuFragment extends Fragment implements MenuView, MenuAdapter.OnMe
     }
 
     @Override
-    public void showTryReconnecting() {
+    public void showTryAgain() {
         AlertDialogBuilder.alertDialogTryAgain(getContext(),
                 getString(R.string.error_connection),
                 getString(R.string.try_again),

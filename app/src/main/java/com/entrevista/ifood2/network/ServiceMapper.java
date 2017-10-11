@@ -38,7 +38,7 @@ public interface ServiceMapper {
     Observable<List<Menu>> getMenu(@Path("restaurantId") long restaurantId);
 
     @GET("payments")
-    Observable<PaymentMethod> getPaymentMethods();
+    Observable<List<PaymentMethod>> getPaymentMethods();
 
     @POST("checkout")
     Observable<CheckoutResponse> checkout(@Body CheckoutRequest request);
