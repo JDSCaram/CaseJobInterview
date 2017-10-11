@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Getter
     private Location mCurrentLocation;
     private TextView cartBadge;
-    private int mValueBadge = 10;
+    private int mValueBadge = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

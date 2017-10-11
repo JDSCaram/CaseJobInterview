@@ -28,4 +28,9 @@
     <string name="clear">Limpar</string>
     <string name="no">Não</string>
     <string name="success_clean_cart">Carrinho limpo com sucesso.</string>
+    <string name="empty_restaurant">Nenhum restaurante encontrado</string>
+    <string name="msg_empty_restaurant">Infelizmente não foi localizado nenhum restaurante na sua localidade. Más não se preocupe, assim que tivermos um restaurante na sua região avisaremos.</string>
+    <string name="error_connection">Ocorreu um erro. Tentar novamente?</string>
+    <string name="try_again">Tentar novamente</string>
+    <string name="delivery_fee_cart">Taxa de entrega</string>
 </resources>

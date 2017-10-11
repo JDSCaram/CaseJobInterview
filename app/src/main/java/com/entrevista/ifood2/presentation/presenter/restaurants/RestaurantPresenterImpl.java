@@ -10,6 +10,7 @@ import com.entrevista.ifood2.repository.Repository;
 import com.entrevista.ifood2.repository.RepositoryImpl;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -22,7 +23,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by JCARAM on 05/10/2017.
  */
 
-public class RestaurantPresenterImpl implements RestaurantPresenter{
+public class RestaurantPresenterImpl implements RestaurantPresenter {
 
     private RestaurantView mView;
     public Repository repository;
@@ -51,7 +52,7 @@ public class RestaurantPresenterImpl implements RestaurantPresenter{
         if (!isViewAttached()) return;
         mView.showProgress();
 
-        Observable<List<Restaurant>> observable  = repository.beginRemote().getServices().getRestaurants(latitude, longitude);
+        Observable<List<Restaurant>> observable = repository.beginRemote().getServices().getRestaurants(latitude, longitude);
         observable.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<Restaurant>>() {
@@ -65,8 +66,8 @@ public class RestaurantPresenterImpl implements RestaurantPresenter{
                         if (!isViewAttached()) return;
                         mView.hideProgress();
 
-                        if (restaurantsResponse != null)
-                            mView.showListRestaurants(restaurantsResponse);
+                        mView.showListRestaurants(restaurantsResponse);
+
                     }
 
                     @Override
@@ -75,10 +76,11 @@ public class RestaurantPresenterImpl implements RestaurantPresenter{
                         mView.hideProgress();
 
                         if (e instanceof UnknownHostException) {
-                            mView.showErrorMessage("Por favor verifique a sua conexão.");
+                            mView.showTryReconnecting();
                         } else {
                             mView.showErrorMessage(e.getMessage());
                         }
+
                     }
 
                     @Override

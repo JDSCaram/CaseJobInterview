@@ -1,5 +1,6 @@
 package com.entrevista.ifood2.presentation.ui.menu;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -45,7 +46,7 @@ public class MenuFragment extends Fragment implements MenuView, MenuAdapter.OnMe
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
         mPresenter = new MenuPresenterImpl(RepositoryImpl.getInstance(new LocalData(), new RemoteData())); //inicializa o mPresenter
         afterViews();
         return view;
@@ -56,13 +57,17 @@ public class MenuFragment extends Fragment implements MenuView, MenuAdapter.OnMe
         mAdapter = new MenuAdapter(getContext());
         mAdapter.setOnMenuClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
+       getMenu();
+
+    }
+
+    private void getMenu() {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             currentRestaurant = (Restaurant) bundle.getSerializable(Restaurant.class.getSimpleName());
             mPresenter.setView(this);
             mPresenter.getMenus(currentRestaurant.getId());
         }
-
     }
 
     @Override
@@ -97,6 +102,25 @@ public class MenuFragment extends Fragment implements MenuView, MenuAdapter.OnMe
     @Override
     public void showErrorMessage(String msg) {
         new AlertDialog.Builder(getContext()).setMessage(msg).create().show();
+    }
+
+    @Override
+    public void showTryReconnecting() {
+        AlertDialogBuilder.alertDialogTryAgain(getContext(),
+                getString(R.string.error_connection),
+                getString(R.string.try_again),
+                getString(R.string.no),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                      getMenu();
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).show();
     }
 
     @Override

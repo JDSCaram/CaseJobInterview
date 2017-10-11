@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@android:color/white"
     tools:context="com.entrevista.ifood2.presentation.ui.detail.DetailActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -41,7 +42,6 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_detail" />
-
 
 
 </android.support.design.widget.CoordinatorLayout>

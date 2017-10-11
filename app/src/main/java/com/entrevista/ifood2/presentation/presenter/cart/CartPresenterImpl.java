@@ -65,7 +65,6 @@ public class CartPresenterImpl implements CartPresenter {
                 .subscribe(new MaybeObserver<RestaurantAndProducts>() {
                     @Override
                     public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
                     }
 
                     @Override
@@ -76,7 +75,6 @@ public class CartPresenterImpl implements CartPresenter {
 
                     @Override
                     public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-
                     }
 
                     @Override

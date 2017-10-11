@@ -1,5 +1,6 @@
 package com.entrevista.ifood2.presentation.ui.restaurants;
 
+import android.content.DialogInterface;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,12 +18,13 @@ import com.entrevista.ifood2.presentation.presenter.restaurants.RestaurantPresen
 import com.entrevista.ifood2.presentation.presenter.restaurants.RestaurantView;
 import com.entrevista.ifood2.presentation.ui.MainActivity;
 import com.entrevista.ifood2.presentation.ui.menu.MenuFragment;
-import com.entrevista.ifood2.network.ServiceFactory;
 import com.entrevista.ifood2.network.bean.Restaurant;
 import com.entrevista.ifood2.repository.RepositoryImpl;
 import com.entrevista.ifood2.repository.data.LocalData;
 import com.entrevista.ifood2.repository.data.RemoteData;
 import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
+
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
@@ -37,14 +39,15 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
     private RecyclerView mRecyclerView;
     private RestaurantAdapter mAdapter;
     private AlertDialog mProgress;
-
+    private View mEmptyView;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_restaurant, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
+        mEmptyView = view.findViewById(R.id.empty_view);
         afterViews();
         return view;
     }
@@ -61,7 +64,7 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)getActivity()).setActionBarTitle(getString(R.string.title_restaurant));
+        ((MainActivity) getActivity()).setActionBarTitle(getString(R.string.title_restaurant));
         mCurrentLocation = ((MainActivity) getActivity()).getMCurrentLocation();
         if (mCurrentLocation != null)
             mPresenter.getRestaurants(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
@@ -97,6 +100,26 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
     }
 
     @Override
+    public void showTryReconnecting() {
+        AlertDialogBuilder.alertDialogTryAgain(getContext(),
+                getString(R.string.error_connection),
+                getString(R.string.try_again),
+                getString(R.string.no),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (mCurrentLocation != null)
+                            mPresenter.getRestaurants(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        getActivity().finish();
+                    }
+                }).show();
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         mPresenter.onDestroy();
@@ -104,8 +127,17 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
 
     @Override
     public void showListRestaurants(List<Restaurant> restaurants) {
-        mAdapter.loadRestaurants(restaurants);
+        if (CollectionUtils.isEmpty(restaurants)) {
+            mEmptyView.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
+        } else {
+            mEmptyView.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mAdapter.loadRestaurants(restaurants);
+        }
+
     }
+
 
     @Override
     public void onClickItem(Restaurant item) {

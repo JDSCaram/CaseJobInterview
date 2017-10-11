@@ -28,13 +28,15 @@ class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     private Context mContext;
     private List<Product> products;
-    @Getter @Setter private OnProductItemClick onProductItemClick;
+    @Getter
+    @Setter
+    private OnProductItemClick onProductItemClick;
 
     public CartAdapter(Context context) {
         mContext = context;
     }
 
-    public void updateList( @NonNull List<Product> products) {
+    public void updateList(@NonNull List<Product> products) {
         this.products = products;
         notifyDataSetChanged();
     }
@@ -53,7 +55,8 @@ class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Product item = products.get(position);
-        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("pt","BR"));
+
+        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
         holder.amount.setText(format.format(item.getAmount()));
         holder.quantity.setText(String.valueOf(item.getQuantity()));
         holder.name.setText(item.getName());
@@ -68,6 +71,7 @@ class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageButton add, remove;
         TextView amount, quantity, name;
+
         public ViewHolder(View itemView) {
             super(itemView);
             add = itemView.findViewById(R.id.add);
@@ -79,26 +83,26 @@ class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    alterProduct(getLayoutPosition());
+                    if (onProductItemClick != null)
+                        onProductItemClick.updateItem(products, products.get(getLayoutPosition()),
+                                getLayoutPosition(), products.get(getLayoutPosition()).getQuantity() + 1);
                 }
             });
 
             remove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    alterProduct(getLayoutPosition());
+                    if (onProductItemClick != null)
+                        onProductItemClick.updateItem(products, products.get(getLayoutPosition()),
+                                getLayoutPosition(), products.get(getLayoutPosition()).getQuantity() - 1);
                 }
             });
 
         }
     }
 
-    private void alterProduct(int layoutPosition) {
-        if (onProductItemClick != null)
-            onProductItemClick.updateItem(products.get(layoutPosition), layoutPosition);
-    }
 
     public interface OnProductItemClick {
-        void updateItem(Product item, int position);
+        void updateItem(List<Product> products, Product item, int position, int increment);
     }
 }

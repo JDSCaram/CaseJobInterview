@@ -37,4 +37,19 @@ public class AlertDialogBuilder {
                 .create();
     }
 
+    public static AlertDialog alertDialogTryAgain(Context context, String msg,
+                                                                    String buttonConfirmText,
+                                                                    String buttonCancelText,
+                                                                    DialogInterface.OnClickListener onClickListener,
+                                                                    DialogInterface.OnClickListener onCancelListener) {
+        return new AlertDialog.Builder(context)
+                .setMessage(msg)
+                .setCancelable(false)
+                .setNegativeButton(buttonCancelText, onCancelListener)
+                .setPositiveButton(buttonConfirmText, onClickListener)
+                .create();
+    }
+
+
+
 }

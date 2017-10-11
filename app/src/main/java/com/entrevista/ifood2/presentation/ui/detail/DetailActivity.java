@@ -191,6 +191,11 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
     }
 
     @Override
+    public void showTryReconnecting() {
+
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         mPresenter.onDestroy();

@@ -3,6 +3,7 @@ package com.entrevista.ifood2.repository.model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
@@ -31,14 +32,19 @@ public class Product {
     @ColumnInfo(name = "url_image")
     public String urlImage;
 
+    public double unitAmount;
+
     public int restaurantId;
 
-    public Product(int id, String name, int quantity, double amount, String urlImage, int restaurantId) {
+    public Product(int id, String name, int quantity, double amount, double unitAmount, String urlImage, int restaurantId) {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
         this.amount = amount;
+        this.unitAmount = unitAmount;
         this.urlImage = urlImage;
         this.restaurantId = restaurantId;
     }
+
+
 }

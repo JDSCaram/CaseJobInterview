@@ -12,4 +12,5 @@ import java.util.List;
 public interface RestaurantView extends BaseView {
     //TODO: METODOS DE RETORNO PARA A VIEW
     void showListRestaurants(List<Restaurant> restaurants);
+
 }

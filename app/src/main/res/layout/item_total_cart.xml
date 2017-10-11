@@ -20,16 +20,16 @@
                 style="@style/SubTextCards"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/delivery_fee"
-                android:textStyle="bold" />
+                android:text="@string/delivery_fee_cart"
+                 />
 
             <TextView
                 style="@style/SubTextCards"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/total_order"
-                android:textColor="@android:color/black"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                 />
 
         </LinearLayout>
 
