@@ -221,6 +221,7 @@ public class CartActivity extends AppCompatActivity implements CartView, CartAda
         for (Product item : products)
             mTotalAmount = mTotalAmount.add(BigDecimal.valueOf(item.getAmount()));
         NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        mDeliveryFee = BigDecimal.valueOf(mCurrentRestaurant.getDeliveryFee());
         mAmountTotal.setText(format.format(mTotalAmount.add(mDeliveryFee)));
         mDeliveryFeeTotal.setText(format.format(mDeliveryFee));
 

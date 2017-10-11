@@ -189,7 +189,7 @@ public class CartPresenterImpl implements CartPresenter {
             public Integer call() throws Exception {
                 return repository.beginLocal().getDatabase().productDao().deleteAllProducts();
             }
-        }).subscribeOn(Schedulers.newThread())
+        }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Integer>() {
                     @Override
@@ -203,7 +203,7 @@ public class CartPresenterImpl implements CartPresenter {
             public Integer call() throws Exception {
                 return repository.beginLocal().getDatabase().restaurantDao().deleteAllRestaurants();
             }
-        }).subscribeOn(Schedulers.newThread())
+        }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Integer>() {
                     @Override
@@ -222,7 +222,7 @@ public class CartPresenterImpl implements CartPresenter {
             public Integer call() throws Exception {
                 return repository.beginLocal().getDatabase().productDao().deleteProductById(item);
             }
-        }).subscribeOn(Schedulers.newThread())
+        }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Integer>() {
                     @Override
@@ -245,7 +245,7 @@ public class CartPresenterImpl implements CartPresenter {
             public Integer call() throws Exception {
                 return repository.beginLocal().getDatabase().productDao().updateProductById(product);
             }
-        }).subscribeOn(Schedulers.newThread())
+        }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Integer>() {
                     @Override

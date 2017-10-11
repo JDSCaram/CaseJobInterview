@@ -19,20 +19,14 @@ import io.reactivex.Observable;
 public interface RestaurantDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertRestaurant(Restaurant... restaurants);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public long insertRestaurant(Restaurant restaurant);
+    long insertRestaurant(Restaurant restaurant);
 
     @Query("SELECT * FROM Restaurant")
     Maybe<RestaurantAndProducts> getProductsForRestaurant();
 
     @Query("SELECT * FROM Restaurant")
-    public
     Maybe<List<Restaurant>> getAllRestaurant();
 
-    @Query("SELECT * FROM restaurant WHERE id = :id LIMIT 1")
-    public Restaurant getRestaurantById(int id);
 
     @Query("DELETE FROM Restaurant")
     int deleteAllRestaurants();

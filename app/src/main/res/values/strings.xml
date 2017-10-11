@@ -19,7 +19,7 @@
     <string name="quantity">Quantidade</string>
     <string name="adicionar_ao_carrinho">Adicionar ao Carrinho</string>
     <string name="unit_value">Valor Unitário -</string>
-    <string name="product_add_to_cart">Produto inserido ao carrinho com sucesso.</string>
+    <string name="product_add_to_cart">Seu produto está no carrinho.</string>
     <string name="my_cart">Meu carrinho</string>
     <string name="empty_cart">Seu carrinho está vazio.</string>
     <string name="total_order">Total do pedido</string>
