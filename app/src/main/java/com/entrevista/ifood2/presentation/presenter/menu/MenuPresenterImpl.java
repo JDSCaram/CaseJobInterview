@@ -73,7 +73,7 @@ public class MenuPresenterImpl implements MenuPresenter {
                         mView.hideProgress();
 
                         if (e instanceof UnknownHostException) {
-                                mView.showErrorMessage("Por favor verifique a sua conexão.");
+                                mView.showTryAgain();
                         } else {
                             mView.showErrorMessage(e.getMessage());
                         }

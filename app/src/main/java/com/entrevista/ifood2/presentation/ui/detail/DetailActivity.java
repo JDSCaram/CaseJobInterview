@@ -7,9 +7,12 @@ import android.os.Bundle;
 import android.support.annotation.UiThread;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -54,6 +57,10 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
         setContentView(R.layout.activity_detail);
         Toolbar mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
         Intent i = getIntent();
         mCheckout = i.getParcelableExtra(CheckoutRequest.class.getSimpleName());
@@ -230,4 +237,14 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
         Toast.makeText(this, R.string.success_clean_cart, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+              finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }

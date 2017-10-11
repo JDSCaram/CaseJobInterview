@@ -5,12 +5,15 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.annotation.UiThread;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -66,6 +69,9 @@ public class CartActivity extends AppCompatActivity implements CartView, CartAda
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
         //Layout General
         mEmptyView = findViewById(R.id.empty_view);
@@ -195,13 +201,13 @@ public class CartActivity extends AppCompatActivity implements CartView, CartAda
             new AlertDialog.Builder(this)
                     .setMessage(getString(R.string.remove_product))
                     .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    products.remove(position);
-                    mAdapter.notifyItemRemoved(position);
-                    mPresenter.removeProduct(item);
-                }
-            }).setNegativeButton(getString(R.string.no), null).create().show();
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            products.remove(position);
+                            mAdapter.notifyItemRemoved(position);
+                            mPresenter.removeProduct(item);
+                        }
+                    }).setNegativeButton(getString(R.string.no), null).create().show();
 
         } else {
             item.setQuantity(increment);
@@ -289,11 +295,11 @@ public class CartActivity extends AppCompatActivity implements CartView, CartAda
     public void checkoutSuccess(CheckoutResponse checkoutResponse) {
         new AlertDialog.Builder(this).setMessage(checkoutResponse.getMessage())
                 .setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-               mPresenter.cleanCart();
-            }
-        }).create().show();
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPresenter.cleanCart();
+                    }
+                }).create().show();
     }
 
     @Override
@@ -304,6 +310,17 @@ public class CartActivity extends AppCompatActivity implements CartView, CartAda
     @Override
     public void updateUi() {
         mPresenter.getProducts();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }

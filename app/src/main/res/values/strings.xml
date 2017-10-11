@@ -2,7 +2,7 @@
     <string name="app_name">IFood 2.0</string>
     <string name="ok">OK</string>
     <string name="cart">Carrinho de Compras</string>
-    <string name="gps_permission">GPS Permissão</string>
+    <string name="gps_permission">Sua permissão é obrigatoria para uso do GPS</string>
     <string name="permission_denied_explanation">Permissao recusada</string>
     <string name="settings">settings</string>
     <string name="no_location_detected">Não foi possivel recuperar sua localização.</string>
@@ -37,4 +37,5 @@
     <string name="empty_cart_msg">Retorne a listagem de restaurantes e escolha um prato delicioso dentro do cardápio.</string>
     <string name="remove_product">Voce tem certeza que deseja remover este item de seu carrinho?</string>
     <string name="yes">SIM</string>
+    <string name="gps_mandatory">Para utilizar a aplicação necessitamos utilizar o sinal GPS e para isso o aplicativo necessita de sua permissão!</string>
 </resources>

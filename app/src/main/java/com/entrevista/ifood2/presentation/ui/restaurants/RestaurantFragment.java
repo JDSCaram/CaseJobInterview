@@ -59,16 +59,16 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
         mRecyclerView.setAdapter(mAdapter);
         mPresenter = new RestaurantPresenterImpl(RepositoryImpl.getInstance(new LocalData(), new RemoteData()));
         mPresenter.setView(this);
+
+        mCurrentLocation = ((MainActivity) getActivity()).getMCurrentLocation();
+        if (mCurrentLocation != null)
+            mPresenter.getRestaurants(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
     }
 
     @Override
     public void onResume() {
         super.onResume();
         ((MainActivity) getActivity()).setActionBarTitle(getString(R.string.title_restaurant));
-        mCurrentLocation = ((MainActivity) getActivity()).getMCurrentLocation();
-        if (mCurrentLocation != null)
-            mPresenter.getRestaurants(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-
     }
 
     @Override

@@ -3,6 +3,7 @@
     <color name="colorPrimary">#bb2026</color>
     <color name="colorPrimaryDark">#a01412</color>
     <color name="colorAccent">#a6a6a6</color>
+    <color name="white_light">#ececec</color>
 
     <color name="subText">#afafaf</color>
     <color name="divisor">#afafaf</color>

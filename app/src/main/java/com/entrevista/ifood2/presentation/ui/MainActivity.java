@@ -3,6 +3,7 @@ package com.entrevista.ifood2.presentation.ui;
 import android.Manifest;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 import com.entrevista.ifood2.R;
 import com.entrevista.ifood2.presentation.ui.cart.CartActivity;
 import com.entrevista.ifood2.presentation.ui.restaurants.RestaurantFragment;
+import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -37,6 +39,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import lombok.Getter;
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         initGoogleApiClient();
         if (mCurrentLocation != null)
             attachFragment(new RestaurantFragment(), getString(R.string.title_restaurant));
@@ -68,8 +72,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onBackStackChanged() {
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.frame_content);
                 setActionBarTitle(fragment.getTag());
+                shouldDisplayHomeUp();
             }
         });
+        shouldDisplayHomeUp();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getSupportFragmentManager().popBackStack();
+        return true;
     }
 
     @Override
@@ -102,11 +114,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onBackPressed() {
-        if (manager.getBackStackEntryCount() <= 1) { // Quando so tiver um fragment no backStack
-            finish();
-        } else {
+        if (manager != null)
+            if (manager.getBackStackEntryCount() <= 1) { // Quando so tiver um fragment no backStack
+                finish();
+            } else {
+                super.onBackPressed();
+            }
+        else
             super.onBackPressed();
-        }
     }
 
     @Override
@@ -137,6 +152,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void shouldDisplayHomeUp() {
+        boolean canback = getSupportFragmentManager().getBackStackEntryCount() > 1;
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(canback);
     }
 
     @UiThread
@@ -199,12 +221,33 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PERMISSIONS_REQUEST_LOCATION) {
-            if (grantResults.length <= 0) {
+            if (grantResults[0] < 0) {
                 Log.e(MainActivity.class.getSimpleName(), "pedido de permissao cancelado");
+                showMessageGPSMandatory();
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getLocation();
             }
         }
+    }
+
+    @UiThread
+    private void showMessageGPSMandatory() {
+        AlertDialogBuilder.alertDialogTryAgain(this,
+                getString(R.string.gps_mandatory),
+                getString(R.string.try_again),
+                getString(R.string.no),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        requestPermissions();
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                }).show();
+
     }
 
     @SuppressWarnings("MissingPermission")
@@ -258,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public void setActionBarTitle(String title) {
-        if (StringUtils.isNotBlank(title) && getSupportActionBar() != null){
+        if (StringUtils.isNotBlank(title) && getSupportActionBar() != null) {
             ActionBar actionBar = getSupportActionBar();
             actionBar.setTitle(title);
         }
