@@ -5,6 +5,7 @@ Retrofit: http://square.github.io/retrofit/ <br />
 MVP: https://medium.com/android-dev-br/desmistificando-o-mvc-e-mvp-no-android-abe927d01df7 <br />
 Lombok : https://projectlombok.org/ <br />
 RxAndroid : https://github.com/ReactiveX/RxAndroid  <br />
+Fresco : http://frescolib.org/ <br />
 
 
 ## DEMO
