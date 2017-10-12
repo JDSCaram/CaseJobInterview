@@ -12,6 +12,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -24,6 +26,8 @@ import com.entrevista.ifood2.presentation.presenter.detail.ProductDetailPresente
 import com.entrevista.ifood2.presentation.presenter.detail.ProductDetailPresenterImpl;
 import com.entrevista.ifood2.presentation.presenter.detail.ProductDetailView;
 import com.entrevista.ifood2.network.bean.CheckoutRequest;
+import com.entrevista.ifood2.presentation.ui.MainActivity;
+import com.entrevista.ifood2.presentation.ui.cart.CartActivity;
 import com.entrevista.ifood2.repository.RepositoryImpl;
 import com.entrevista.ifood2.repository.data.LocalData;
 import com.entrevista.ifood2.repository.data.RemoteData;
@@ -241,10 +245,31 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-              finish();
+                finish();
                 return true;
-        }
+            case R.id.cart: {
+                Intent i = new Intent(DetailActivity.this, CartActivity.class);
+                startActivity(i);
+                return false;
 
+            }
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.ifood_menu, menu);
+
+        final MenuItem menuItem = menu.findItem(R.id.cart);
+        View view = menuItem.getActionView();
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onOptionsItemSelected(menuItem);
+            }
+        });
+        return true;
     }
 }

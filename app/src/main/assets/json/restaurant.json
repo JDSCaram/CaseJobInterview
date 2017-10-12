@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Pizzaria do Nono",
+    "imageUrl": "http://guiafonecel.com.br/wp-content/uploads/2014/01/Nonno-Fiorello-logo-238x200.jpg",
+    "description": "A melhor pizzaria com o melhor preço da cidade!",
+    "address": "Rua Taubaté, 641",
+    "rating": 4.5,
+    "deliveryFee": 5
+  },
+  {
+    "id": 2,
+    "name": "Empório do Neco",
+    "imageUrl": "https://static.wixstatic.com/media/0f941d_fef3f31f01cc44499b65a92a336656de.png/v1/fill/w_329,h_190,al_c,usm_0.66_1.00_0.01/0f941d_fef3f31f01cc44499b65a92a336656de.png",
+    "description": "O melhor empório com o melhor preço da cidade!",
+    "address": "Rua Salto, 642",
+    "rating": 3.5,
+    "deliveryFee": 8.5
+  },
+  {
+    "id": 3,
+    "name": "Churrascaria Sal e Brasa",
+    "imageUrl": "http://www.festbossajazz.com.br/wp-content/uploads/2016/08/Logomarca-1.png",
+    "description": "A melhor churrascaria com o melhor preço da cidade!",
+    "address": "Rua Indaiatuba, 643",
+    "rating": 5,
+    "deliveryFee": 7
+  },
+  {
+    "id": 4,
+    "name": "Sushi do zé",
+    "imageUrl": "https://www.secrettelaviv.com/wp-content/uploads/2017/07/40966_1016763_632735943458784_899702537_n.png",
+    "description": "O melhor peixe com o melhor preço da cidade!",
+    "address": "Rua São José dos Campos, 644",
+    "rating": 4,
+    "deliveryFee": 3.5
+  }
+]
