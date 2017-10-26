@@ -3,7 +3,7 @@
 Room Persistence Library:  https://developer.android.com/topic/libraries/architecture/room.html <br />
 Retrofit: http://square.github.io/retrofit/ <br />
 MVP: https://medium.com/android-dev-br/desmistificando-o-mvc-e-mvp-no-android-abe927d01df7 <br />
-Lombok : https://projectlombok.org/ <br />
+Lombok : https://projectlombok.org/ (plugin required on Android Studio) <br />
 RxAndroid : https://github.com/ReactiveX/RxAndroid  <br />
 Fresco : http://frescolib.org/ <br />
 
