@@ -136,7 +136,7 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
     }
 
 
-    private void hasProductInBase(final Product product, final Restaurant restaurant) {
+    private void insertProductOrUpdate(final Product product, final Restaurant restaurant) {
         Single<Product> observable = repository.beginLocal().getDatabase().productDao().getProductById(product.getId());
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -284,7 +284,7 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
                         restaurant.getId()));
             }
 
-            hasProductInBase(products.get(0), restaurant);
+            insertProductOrUpdate(products.get(0), restaurant);
 
         }
     }

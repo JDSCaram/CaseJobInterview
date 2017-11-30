@@ -27,6 +27,20 @@ public class Restaurant {
     @Ignore
     List<Product> products;
 
+    public Restaurant() {
+    }
+
+    private Restaurant(Builder builder) {
+        setId(builder.id);
+        setName(builder.name);
+        setImageUrl(builder.imageUrl);
+        setDescription(builder.description);
+        setAddress(builder.address);
+        setRating(builder.rating);
+        setDeliveryFee(builder.deliveryFee);
+        setProducts(builder.products);
+    }
+
     public int getUid() {
         return uid;
     }
@@ -97,5 +111,64 @@ public class Restaurant {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+
+    public static final class Builder {
+        private int id;
+        private String name;
+        private String imageUrl;
+        private String description;
+        private String address;
+        private double rating;
+        private double deliveryFee;
+        private List<Product> products;
+
+        public Builder() {
+        }
+
+        public Builder id(int val) {
+            id = val;
+            return this;
+        }
+
+        public Builder name(String val) {
+            name = val;
+            return this;
+        }
+
+        public Builder imageUrl(String val) {
+            imageUrl = val;
+            return this;
+        }
+
+        public Builder description(String val) {
+            description = val;
+            return this;
+        }
+
+        public Builder address(String val) {
+            address = val;
+            return this;
+        }
+
+        public Builder rating(double val) {
+            rating = val;
+            return this;
+        }
+
+        public Builder deliveryFee(double val) {
+            deliveryFee = val;
+            return this;
+        }
+
+        public Builder products(List<Product> val) {
+            products = val;
+            return this;
+        }
+
+        public Restaurant build() {
+            return new Restaurant(this);
+        }
     }
 }

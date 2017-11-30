@@ -43,6 +43,17 @@ public class Product {
         this.restaurantId = restaurantId;
     }
 
+    private Product(Builder builder) {
+        setId(builder.id);
+        setName(builder.name);
+        setQuantity(builder.quantity);
+        setAmount(builder.amount);
+        setUrlImage(builder.urlImage);
+        setUnitAmount(builder.unitAmount);
+        setDescription(builder.description);
+        setRestaurantId(builder.restaurantId);
+    }
+
     public int getUid() {
         return uid;
     }
@@ -113,5 +124,64 @@ public class Product {
 
     public void setRestaurantId(int restaurantId) {
         this.restaurantId = restaurantId;
+    }
+
+
+    public static final class Builder {
+        private int id;
+        private String name;
+        private int quantity;
+        private double amount;
+        private String urlImage;
+        private double unitAmount;
+        private String description;
+        private int restaurantId;
+
+        public Builder() {
+        }
+
+        public Builder id(int val) {
+            id = val;
+            return this;
+        }
+
+        public Builder name(String val) {
+            name = val;
+            return this;
+        }
+
+        public Builder quantity(int val) {
+            quantity = val;
+            return this;
+        }
+
+        public Builder amount(double val) {
+            amount = val;
+            return this;
+        }
+
+        public Builder urlImage(String val) {
+            urlImage = val;
+            return this;
+        }
+
+        public Builder unitAmount(double val) {
+            unitAmount = val;
+            return this;
+        }
+
+        public Builder description(String val) {
+            description = val;
+            return this;
+        }
+
+        public Builder restaurantId(int val) {
+            restaurantId = val;
+            return this;
+        }
+
+        public Product build() {
+            return new Product(this);
+        }
     }
 }
