@@ -10,8 +10,6 @@ import com.entrevista.ifood2.repository.RepositoryImpl;
 import com.entrevista.ifood2.repository.model.Product;
 import com.entrevista.ifood2.repository.model.Restaurant;
 
-import org.apache.commons.collections4.CollectionUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -138,7 +136,6 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
     }
 
 
-
     private void hasProductInBase(final Product product, final Restaurant restaurant) {
         Single<Product> observable = repository.beginLocal().getDatabase().productDao().getProductById(product.getId());
         observable.subscribeOn(Schedulers.io())
@@ -251,7 +248,7 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
 
 
     private boolean isSameRestaurantOrEmpty(List<Restaurant> restaurants, CheckoutRequest checkoutRequest) {
-        if (CollectionUtils.isNotEmpty(restaurants)) {
+        if (!restaurants.isEmpty()) {
             for (Restaurant restaurant : restaurants) {
                 if (restaurant.getId() == checkoutRequest.getRestaurant().getId())
                     return true;
@@ -264,7 +261,7 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
 
 
     private void insertRestaurantAndProduct(CheckoutRequest checkoutRequest) {
-        if (CollectionUtils.isNotEmpty(checkoutRequest.getMenus())) {
+        if (!checkoutRequest.getMenus().isEmpty()) {
             final List<Product> products = new ArrayList<>();
             final Restaurant restaurant = new Restaurant();
             restaurant.setAddress(checkoutRequest.getRestaurant().getAddress());

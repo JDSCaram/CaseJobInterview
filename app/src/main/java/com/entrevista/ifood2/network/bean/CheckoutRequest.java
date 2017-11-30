@@ -10,19 +10,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import lombok.Getter;
-import lombok.Setter;
 
 
 /**
  * Created by JCARAM on 07/10/2017.
  */
-@Setter @Getter
+
 public class CheckoutRequest implements Parcelable {
     private Restaurant restaurant;
     private PaymentMethod method;
     private List<Menu> menus;
 
+
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+
+    public PaymentMethod getMethod() {
+        return method;
+    }
+
+    public void setMethod(PaymentMethod method) {
+        this.method = method;
+    }
+
+    public List<Menu> getMenus() {
+        return menus;
+    }
+
+    public void setMenus(List<Menu> menus) {
+        this.menus = menus;
+    }
 
     @Override
     public int describeContents() {

@@ -5,13 +5,13 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.annotation.UiThread;
-import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,9 +21,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.entrevista.ifood2.R;
-import com.entrevista.ifood2.network.bean.CheckoutRequest;
 import com.entrevista.ifood2.network.bean.CheckoutResponse;
-import com.entrevista.ifood2.network.bean.Menu;
 import com.entrevista.ifood2.network.bean.PaymentMethod;
 import com.entrevista.ifood2.presentation.presenter.cart.CartPresenter;
 import com.entrevista.ifood2.presentation.presenter.cart.CartPresenterImpl;
@@ -37,12 +35,8 @@ import com.entrevista.ifood2.repository.model.RestaurantAndProducts;
 import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
 import com.facebook.drawee.view.SimpleDraweeView;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -159,7 +153,7 @@ public class CartActivity extends AppCompatActivity implements CartView, CartAda
     @UiThread
     @Override
     public void loadProducts(RestaurantAndProducts restaurantAndProducts) {
-        if (CollectionUtils.isEmpty(restaurantAndProducts.products)) {
+        if (restaurantAndProducts.products.isEmpty()) {
             mEmptyView.setVisibility(View.VISIBLE);
             mContainerView.setVisibility(View.GONE);
         } else {
@@ -178,13 +172,13 @@ public class CartActivity extends AppCompatActivity implements CartView, CartAda
     @UiThread
     private void initRestaurantData(Restaurant restaurant) {
         mCurrentRestaurant = restaurant;
-        if (StringUtils.isNotBlank(restaurant.getImageUrl()))
+        if (!TextUtils.isEmpty(restaurant.getImageUrl()))
             mRestaurantImage.setImageURI(restaurant.getImageUrl());
 
-        if (StringUtils.isNotBlank(restaurant.getName()))
+        if (!TextUtils.isEmpty(restaurant.getName()))
             mName.setText(restaurant.getName());
 
-        if (StringUtils.isNotBlank(restaurant.getDescription()))
+        if (!TextUtils.isEmpty(restaurant.getDescription()))
             mDescription.setText(restaurant.getDescription());
 
         mRatingBar.setRating((float) restaurant.getRating());
@@ -244,7 +238,7 @@ public class CartActivity extends AppCompatActivity implements CartView, CartAda
 
     @Override
     public void loadMethodPayments(final List<PaymentMethod> paymentMethods) {
-        if (CollectionUtils.isNotEmpty(paymentMethods)) {
+        if (!paymentMethods.isEmpty()) {
             for (int i = 0; i < paymentMethods.size(); i++) {
                 if (!paymentMethods.get(i).isEnabled())
                     paymentMethods.remove(i);

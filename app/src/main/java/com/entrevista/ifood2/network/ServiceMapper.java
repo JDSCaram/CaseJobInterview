@@ -31,16 +31,16 @@ public interface ServiceMapper {
     //GET: https://demo1531977.mockable.io/payments
     //POST: https://demo1531977.mockable.io/checkout
 
-    @GET("restaurants")
+    @GET("/restaurants")
     Observable<List<Restaurant>> getRestaurants(@Query("lat") double lat, @Query("lng") double lng);
 
-    @GET("menu/{restaurantId}")
+    @GET("/menu/{restaurantId}")
     Observable<List<Menu>> getMenu(@Path("restaurantId") long restaurantId);
 
-    @GET("payments")
+    @GET("/payments")
     Observable<List<PaymentMethod>> getPaymentMethods();
 
-    @POST("checkout")
+    @POST("/checkout")
     Observable<CheckoutResponse> checkout(@Body CheckoutRequest request);
 
 }

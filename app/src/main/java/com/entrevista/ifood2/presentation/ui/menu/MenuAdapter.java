@@ -3,6 +3,7 @@ package com.entrevista.ifood2.presentation.ui.menu;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +15,11 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 
-import org.apache.commons.lang3.StringUtils;
 
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Created by JCARAM on 08/10/2017.
@@ -31,7 +29,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
     private Context context;
     private List<Menu> menus;
-    @Getter @Setter  private OnMenuClickListener onMenuClickListener;
+    private OnMenuClickListener onMenuClickListener;
 
     public MenuAdapter(Context context) {
         this.context = context;
@@ -51,17 +49,17 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Menu item = menus.get(position);
-        if (StringUtils.isNotBlank(item.getName()))
+        if (!TextUtils.isEmpty(item.getName()))
             holder.name.setText(item.getName());
 
-        if (StringUtils.isNotBlank(item.getImageUrl())){
+        if (!TextUtils.isEmpty(item.getImageUrl())){
             Uri uri = Uri.parse(item.getImageUrl());
             DraweeController controller = Fresco.newDraweeControllerBuilder().setUri(uri).build();
             holder.image.setController(controller);
         }
 
 
-        if (StringUtils.isNotBlank(item.getDescription()))
+        if (!TextUtils.isEmpty(item.getDescription()))
             holder.description.setText(item.getDescription());
 
         NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("pt","BR"));
@@ -100,5 +98,9 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
     public interface OnMenuClickListener{
         void onClickItem(Menu item);
+    }
+
+    public void setOnMenuClickListener(OnMenuClickListener onMenuClickListener) {
+        this.onMenuClickListener = onMenuClickListener;
     }
 }

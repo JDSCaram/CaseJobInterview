@@ -7,11 +7,11 @@ import android.os.Bundle;
 import android.support.annotation.UiThread;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,11 +22,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.entrevista.ifood2.R;
+import com.entrevista.ifood2.network.bean.CheckoutRequest;
 import com.entrevista.ifood2.presentation.presenter.detail.ProductDetailPresenter;
 import com.entrevista.ifood2.presentation.presenter.detail.ProductDetailPresenterImpl;
 import com.entrevista.ifood2.presentation.presenter.detail.ProductDetailView;
-import com.entrevista.ifood2.network.bean.CheckoutRequest;
-import com.entrevista.ifood2.presentation.ui.MainActivity;
 import com.entrevista.ifood2.presentation.ui.cart.CartActivity;
 import com.entrevista.ifood2.repository.RepositoryImpl;
 import com.entrevista.ifood2.repository.data.LocalData;
@@ -35,8 +34,6 @@ import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -100,15 +97,15 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
 
     private void afterViews() {
 
-        if (StringUtils.isNotBlank(mCheckout.getMenus().get(0).getImageUrl())) {
+        if (!TextUtils.isEmpty(mCheckout.getMenus().get(0).getImageUrl())) {
             Uri uri = Uri.parse(mCheckout.getMenus().get(0).getImageUrl());
             DraweeController controller = Fresco.newDraweeControllerBuilder().setUri(uri).build();
             mImage.setController(controller);
         }
-        if (StringUtils.isNotBlank(mCheckout.getMenus().get(0).getName())) {
+        if (!TextUtils.isEmpty(mCheckout.getMenus().get(0).getName())) {
             mName.setText(mCheckout.getMenus().get(0).getName());
         }
-        if (StringUtils.isNotBlank(mCheckout.getMenus().get(0).getDescription())) {
+        if (!TextUtils.isEmpty(mCheckout.getMenus().get(0).getDescription())) {
             mDescription.setText(mCheckout.getMenus().get(0).getDescription());
         }
         double unitValueFixo = mCheckout.getMenus().get(0).getPrice();

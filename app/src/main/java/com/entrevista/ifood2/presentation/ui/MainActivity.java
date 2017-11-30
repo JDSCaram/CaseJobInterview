@@ -1,12 +1,11 @@
 package com.entrevista.ifood2.presentation.ui;
 
 import android.Manifest;
-
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
@@ -15,11 +14,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,22 +24,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-
 import com.entrevista.ifood2.R;
 import com.entrevista.ifood2.presentation.ui.cart.CartActivity;
+import com.entrevista.ifood2.presentation.ui.restaurants.LocationListener;
 import com.entrevista.ifood2.presentation.ui.restaurants.RestaurantFragment;
 import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import lombok.Getter;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -53,7 +46,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private FragmentManager manager;
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
-    @Getter
+    private FusedLocationProviderClient mFusedLocationClient;
+    private LocationListener mLocationListener;
+
     private Location mCurrentLocation;
     private TextView cartBadge;
     private int mValueBadge = 0;
@@ -65,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         initGoogleApiClient();
         if (mCurrentLocation != null)
-            attachFragment(new RestaurantFragment(), getString(R.string.title_restaurant));
+            attachFragment(createFragmentRestaurant(mCurrentLocation), getString(R.string.title_restaurant));
 
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
@@ -252,22 +247,39 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @SuppressWarnings("MissingPermission")
     private void getLocation() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, new LocationListener() {
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
             @Override
-            public void onLocationChanged(Location location) {
+            public void onSuccess(Location location) {
+
+                Log.d(MainActivity.class.getSimpleName(),
+                        "onSuccess: Location - Lat: " +location.getLatitude() + "" +
+                                " Longitude: " + location.getLongitude() );
+
                 if (mCurrentLocation == null) {
                     mCurrentLocation = location;
-                    attachFragment(new RestaurantFragment(), getString(R.string.title_restaurant));
+                    attachFragment(createFragmentRestaurant(location), getString(R.string.title_restaurant));
                 } else {
                     mCurrentLocation = location;
+                    if (mLocationListener != null){
+                        mLocationListener.locationChanged(location);
+                    }
                 }
-
             }
         });
 
+
+    }
+
+    private Fragment createFragmentRestaurant(Location location) {
+        Bundle bundle = new Bundle();
+        RestaurantFragment restaurantFragment = new RestaurantFragment();
+        bundle.putParcelable("LOCATION", location);
+        restaurantFragment.setArguments(bundle);
+        return restaurantFragment;
     }
 
     protected synchronized void initGoogleApiClient() {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -301,9 +313,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public void setActionBarTitle(String title) {
-        if (StringUtils.isNotBlank(title) && getSupportActionBar() != null) {
+        if (!TextUtils.isEmpty(title) && getSupportActionBar() != null) {
             ActionBar actionBar = getSupportActionBar();
             actionBar.setTitle(title);
         }
+    }
+
+    public void setLocationListener(LocationListener mLocationListener) {
+        this.mLocationListener = mLocationListener;
     }
 }

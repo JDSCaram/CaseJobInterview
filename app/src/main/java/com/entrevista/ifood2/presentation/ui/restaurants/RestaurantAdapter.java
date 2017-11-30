@@ -5,6 +5,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +16,9 @@ import com.entrevista.ifood2.R;
 import com.entrevista.ifood2.network.bean.Restaurant;
 import com.facebook.drawee.view.SimpleDraweeView;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Created by JCARAM on 07/10/2017.
@@ -32,7 +28,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
     private List<Restaurant> restaurants;
     private Context context;
-    @Getter @Setter OnRestaurantClickListener onItemClickListener;
+    OnRestaurantClickListener onItemClickListener;
 
     public RestaurantAdapter(Context context) {
         this.context = context;
@@ -53,16 +49,16 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     public void onBindViewHolder(ViewHolder holder, int position) {
         Restaurant item = restaurants.get(position);
 
-        if (StringUtils.isNotBlank(item.getName()))
+        if (!TextUtils.isEmpty(item.getName()))
             holder.name.setText(item.getName());
 
-        if (StringUtils.isNotBlank(item.getImageUrl()))
+        if (!TextUtils.isEmpty(item.getImageUrl()))
             holder.restaurantImage.setImageURI(item.getImageUrl());
 
-        if (StringUtils.isNotBlank(item.getDescription()))
+        if (!TextUtils.isEmpty(item.getDescription()))
             holder.description.setText(item.getDescription());
 
-        if (StringUtils.isNotBlank(item.getAddress()))
+        if (!TextUtils.isEmpty(item.getAddress()))
             holder.address.setText(item.getAddress());
 
         NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("pt","BR"));
@@ -109,5 +105,13 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
     public interface OnRestaurantClickListener{
         void onClickItem(Restaurant item);
+    }
+
+    public OnRestaurantClickListener getOnItemClickListener() {
+        return onItemClickListener;
+    }
+
+    public void setOnItemClickListener(OnRestaurantClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 }

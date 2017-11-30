@@ -13,18 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.entrevista.ifood2.R;
+import com.entrevista.ifood2.network.bean.Restaurant;
 import com.entrevista.ifood2.presentation.presenter.restaurants.RestaurantPresenter;
 import com.entrevista.ifood2.presentation.presenter.restaurants.RestaurantPresenterImpl;
 import com.entrevista.ifood2.presentation.presenter.restaurants.RestaurantView;
 import com.entrevista.ifood2.presentation.ui.MainActivity;
 import com.entrevista.ifood2.presentation.ui.menu.MenuFragment;
-import com.entrevista.ifood2.network.bean.Restaurant;
 import com.entrevista.ifood2.repository.RepositoryImpl;
 import com.entrevista.ifood2.repository.data.LocalData;
 import com.entrevista.ifood2.repository.data.RemoteData;
 import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
-
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
@@ -48,6 +46,11 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
         View view = inflater.inflate(R.layout.fragment_restaurant, container, false);
         mRecyclerView = view.findViewById(R.id.recycler_view);
         mEmptyView = view.findViewById(R.id.empty_view);
+
+        Bundle bundle = getArguments();
+        if (bundle != null)
+            mCurrentLocation = bundle.getParcelable("LOCATION");
+
         afterViews();
         return view;
     }
@@ -60,9 +63,16 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
         mPresenter = new RestaurantPresenterImpl(RepositoryImpl.getInstance(new LocalData(), new RemoteData()));
         mPresenter.setView(this);
 
-        mCurrentLocation = ((MainActivity) getActivity()).getMCurrentLocation();
         if (mCurrentLocation != null)
             mPresenter.getRestaurants(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+        else
+            ((MainActivity)getActivity()).setLocationListener(new LocationListener() {
+                @Override
+                public void locationChanged(Location location) {
+                    mCurrentLocation = location;
+                    mPresenter.getRestaurants(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                }
+            });
     }
 
     @Override
@@ -127,7 +137,7 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
 
     @Override
     public void showListRestaurants(List<Restaurant> restaurants) {
-        if (CollectionUtils.isEmpty(restaurants)) {
+        if (restaurants.isEmpty()) {
             mEmptyView.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);
         } else {

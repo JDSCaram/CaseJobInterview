@@ -3,18 +3,13 @@ package com.entrevista.ifood2.repository.model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Created by JCARAM on 09/10/2017.
  */
-@Getter
-@Setter
+
 @Entity(indices = {@Index(value = {"id"}, unique = true)},
         foreignKeys = @ForeignKey(entity = Restaurant.class,
                 parentColumns = "id",
@@ -48,5 +43,75 @@ public class Product {
         this.restaurantId = restaurantId;
     }
 
+    public int getUid() {
+        return uid;
+    }
 
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public String getUrlImage() {
+        return urlImage;
+    }
+
+    public void setUrlImage(String urlImage) {
+        this.urlImage = urlImage;
+    }
+
+    public double getUnitAmount() {
+        return unitAmount;
+    }
+
+    public void setUnitAmount(double unitAmount) {
+        this.unitAmount = unitAmount;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(int restaurantId) {
+        this.restaurantId = restaurantId;
+    }
 }

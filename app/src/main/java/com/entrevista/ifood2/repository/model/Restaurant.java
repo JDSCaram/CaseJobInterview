@@ -7,14 +7,10 @@ import android.arch.persistence.room.PrimaryKey;
 
 import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Created by JCARAM on 09/10/2017.
  */
-@Getter
-@Setter
+
 @Entity(indices = {@Index(value = {"id"}, unique = true)})
 public class Restaurant {
     @PrimaryKey(autoGenerate = true)
@@ -30,4 +26,76 @@ public class Restaurant {
 
     @Ignore
     List<Product> products;
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public double getDeliveryFee() {
+        return deliveryFee;
+    }
+
+    public void setDeliveryFee(double deliveryFee) {
+        this.deliveryFee = deliveryFee;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
 }

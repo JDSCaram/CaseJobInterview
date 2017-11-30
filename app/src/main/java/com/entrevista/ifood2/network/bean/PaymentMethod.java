@@ -2,15 +2,9 @@ package com.entrevista.ifood2.network.bean;
 
 import java.io.Serializable;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 /**
  * Created by JCARAM on 07/10/2017.
  */
-@Getter @Setter
 public class PaymentMethod implements Serializable{
     private int id;
     private String name;
@@ -22,6 +16,30 @@ public class PaymentMethod implements Serializable{
     public PaymentMethod(int id, String name, boolean enabled) {
         this.id = id;
         this.name = name;
+        this.enabled = enabled;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 }

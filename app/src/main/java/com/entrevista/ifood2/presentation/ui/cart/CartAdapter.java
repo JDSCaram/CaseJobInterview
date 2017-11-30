@@ -17,9 +17,6 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Created by JCARAM on 09/10/2017.
  */
@@ -28,8 +25,7 @@ class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     private Context mContext;
     private List<Product> products;
-    @Getter
-    @Setter
+
     private OnProductItemClick onProductItemClick;
 
     public CartAdapter(Context context) {
@@ -104,5 +100,13 @@ class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     public interface OnProductItemClick {
         void updateItem(List<Product> products, Product item, int position, int increment);
+    }
+
+    public OnProductItemClick getOnProductItemClick() {
+        return onProductItemClick;
+    }
+
+    public void setOnProductItemClick(OnProductItemClick onProductItemClick) {
+        this.onProductItemClick = onProductItemClick;
     }
 }
