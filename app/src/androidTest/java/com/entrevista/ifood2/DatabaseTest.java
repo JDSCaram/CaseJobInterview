@@ -81,7 +81,7 @@ public class DatabaseTest {
 
 
     @Test
-    public void getProducts(){
+    public void getProducts() {
         List<Product> products = buildProducts();
         Restaurant restaurant = new Restaurant.Builder()
                 .id(1)
@@ -109,7 +109,7 @@ public class DatabaseTest {
     }
 
     @Test
-    public void cleanCart(){
+    public void cleanCart() {
 
         List<Product> products = buildProducts();
         Restaurant restaurant = new Restaurant.Builder()
@@ -132,6 +132,41 @@ public class DatabaseTest {
 
         Assert.assertTrue(nProductsRemoved > 0 && nRestaurantsRemoved > 0);
     }
+
+
+    @Test
+    public void removeProduct() {
+        List<Product> products = buildProducts();
+        Restaurant restaurant = new Restaurant.Builder()
+                .id(1)
+                .address("Test Address")
+                .deliveryFee(10)
+                .description("The Best Restaurant")
+                .imageUrl("http://www.festbossajazz.com.br/wp-content/uploads/2016/08/Logomarca-1.png")
+                .name("Test Restaurant Name")
+                .rating(10)
+                .products(products)
+                .build();
+
+        products.get(0).setRestaurantId(restaurant.getId());
+        mRestaurantDao.insertRestaurant(restaurant);
+        mProductDao.insertProduct(products.get(0));
+
+        final Product[] productFromBase = new Product[1];
+        mProductDao.getProductById(products.get(0).getId())
+                .test().assertValue(new Predicate<Product>() {
+            @Override
+            public boolean test(Product product) throws Exception {
+                productFromBase[0] = product;
+                return product != null;
+            }
+        });
+
+        int nRowsRemoved = mProductDao.deleteProductById(productFromBase[0]);
+
+        Assert.assertTrue(nRowsRemoved == 1); //one product removed
+    }
+
 
     private List<Product> buildProducts() {
         List<Product> products = new ArrayList<>();
