@@ -86,6 +86,7 @@ public class CartPresenterImpl implements CartPresenter {
 
                     @Override
                     public void onComplete() {
+                        if (!isViewAttached()) return;
                         mView.hideProgress();
                         mView.loadProducts(new RestaurantAndProducts());
                     }

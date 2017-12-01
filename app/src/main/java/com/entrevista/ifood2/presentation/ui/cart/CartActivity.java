@@ -153,7 +153,7 @@ public class CartActivity extends AppCompatActivity implements CartView, CartAda
     @UiThread
     @Override
     public void loadProducts(RestaurantAndProducts restaurantAndProducts) {
-        if (restaurantAndProducts.products.isEmpty()) {
+        if (restaurantAndProducts.products == null) {
             mEmptyView.setVisibility(View.VISIBLE);
             mContainerView.setVisibility(View.GONE);
         } else {
