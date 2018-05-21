@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.entrevista.ifood2"
         minSdkVersion 17
@@ -42,16 +42,22 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
 }
 
 dependencies {
     final RETROFIT_VERSION = '2.3.0'
+    final OKHTTP_VERSION = '3.10.0'
     final SUPPORT_LIBRARY_VERSION = '26.1.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.google.android.gms:play-services-location:11.6.2'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.google.android.gms:play-services-location:15.0.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
     implementation "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
     implementation "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
@@ -61,26 +67,37 @@ dependencies {
     implementation "com.android.support:support-vector-drawable:$SUPPORT_LIBRARY_VERSION"
     implementation "com.android.support:support-v4:$SUPPORT_LIBRARY_VERSION"
 
-    implementation 'com.squareup.okhttp3:okhttp:3.8.1'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
+    //Dependency Retrofit + OkHttp
+    implementation "com.squareup.okhttp3:okhttp:$OKHTTP_VERSION"
+    implementation "com.squareup.okhttp3:logging-interceptor:$OKHTTP_VERSION"
     implementation "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
     implementation "com.squareup.retrofit2:converter-gson:$RETROFIT_VERSION"
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$RETROFIT_VERSION"
 
+    //RxJava + Android
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
+    annotationProcessor 'io.reactivex.rxjava2:rxjava:2.1.7'
+
+    //Dagger2
+    implementation 'com.google.dagger:dagger:2.16'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+    //Lib Image
     implementation 'com.facebook.fresco:fresco:1.5.0'
 
-    implementation "android.arch.persistence.room:rxjava2:1.0.0"
-    implementation "android.arch.persistence.room:runtime:1.0.0"
-    annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
+    //Room Persistence Lib
+    implementation 'android.arch.persistence.room:runtime:1.1.0'
+    annotationProcessor "android.arch.persistence.room:compiler:1.1.0"
+    implementation 'android.arch.persistence.room:rxjava2:1.1.0'
 
     //Test
-    testImplementation "android.arch.persistence.room:testing:1.0.0"
-    testImplementation "com.android.support.test:runner:1.0.1"
-    testImplementation "com.android.support.test:rules:1.0.1"
+    testImplementation "android.arch.persistence.room:testing:1.1.0"
+    testImplementation "com.android.support.test:runner:1.0.2"
+    testImplementation "com.android.support.test:rules:1.0.2"
     testImplementation 'junit:junit:4.12'
-    testImplementation "org.mockito:mockito-core:2.12.0"
+    testImplementation "org.mockito:mockito-core:2.18.3"
     androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })

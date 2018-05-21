@@ -1,18 +1,23 @@
 package com.entrevista.ifood2.repository.data;
 
-import com.entrevista.ifood2.network.ServiceFactory;
-import com.entrevista.ifood2.network.ServiceMapper;
+import javax.inject.Inject;
+
+import retrofit2.Retrofit;
 
 /**
  * Created by JCARAM on 09/10/2017.
  */
 
 public class RemoteData {
-    private ServiceMapper factory;
 
-    public ServiceMapper getServices(){
-        if (factory == null)
-            factory = ServiceFactory.makeService();
-        return factory;
+    private Retrofit mRetrofit;
+
+    @Inject
+    public RemoteData(Retrofit mRetrofit) {
+        this.mRetrofit = mRetrofit;
+    }
+
+    public Retrofit getRetrofit() {
+        return mRetrofit;
     }
 }

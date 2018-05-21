@@ -1,9 +1,12 @@
 package com.entrevista.ifood2;
 
 import android.app.Application;
-import android.arch.persistence.room.Room;
 
-import com.entrevista.ifood2.storage.database.AppDataBase;
+import com.entrevista.ifood2.dagger.component.AppComponent;
+import com.entrevista.ifood2.dagger.component.DaggerAppComponent;
+import com.entrevista.ifood2.dagger.module.application.RetrofitModule;
+import com.entrevista.ifood2.dagger.module.application.RoomModule;
+import com.entrevista.ifood2.dagger.module.application.SharedPrefsModule;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
 /**
@@ -12,30 +15,25 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 
 public class App extends Application {
 
-    public static App INSTANCE;
-    private static final String DATABASE_NAME = "ifood_db";
-    private AppDataBase mDatabase;
+    private AppComponent mAppComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Fresco.initialize(this);
-        initDatabase();
+        initDaggerApplicationComponent();
     }
 
-    private void initDatabase() {
-        mDatabase = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, DATABASE_NAME)
+    private void initDaggerApplicationComponent() {
+        mAppComponent = DaggerAppComponent.builder()
+                .roomModule(new RoomModule(this))
+                .retrofitModule(new RetrofitModule(BuildConfig.BASE_URL))
+                .sharedPrefsModule(new SharedPrefsModule(this))
                 .build();
-
-        INSTANCE = this;
+        mAppComponent.inject(this);
     }
 
-    public AppDataBase getDatabase() {
-        return mDatabase;
+    public AppComponent getAppComponent() {
+        return mAppComponent;
     }
-
-    public static App getInstance() {
-        return INSTANCE;
-    }
-
 }

@@ -1,8 +1,11 @@
 package com.entrevista.ifood2.repository.data;
 
 
-import com.entrevista.ifood2.App;
+import android.content.SharedPreferences;
+
 import com.entrevista.ifood2.storage.database.AppDataBase;
+
+import javax.inject.Inject;
 
 
 /**
@@ -11,13 +14,20 @@ import com.entrevista.ifood2.storage.database.AppDataBase;
 
 public class LocalData {
     private AppDataBase mDatabase;
+    private SharedPreferences prefs;
+
+    @Inject
+    public LocalData(AppDataBase mDatabase, SharedPreferences prefs) {
+        this.mDatabase = mDatabase;
+        this.prefs = prefs;
+    }
 
     public AppDataBase getDatabase() {
-        if (mDatabase == null)
-            mDatabase = App.getInstance().getDatabase();
-
         return mDatabase;
     }
 
+    public SharedPreferences getPrefs() {
+        return prefs;
+    }
 
 }
