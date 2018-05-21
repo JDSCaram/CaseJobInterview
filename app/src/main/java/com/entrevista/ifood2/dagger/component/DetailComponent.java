@@ -16,5 +16,5 @@ import dagger.Component;
         modules = DetailModule.class
 )
 public interface DetailComponent {
-    void inject(ProductDetailView activity);
+    void inject(DetailActivity activity);
 }

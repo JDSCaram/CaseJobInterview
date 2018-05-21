@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.entrevista.ifood2.App;
 import com.entrevista.ifood2.R;
+import com.entrevista.ifood2.dagger.component.AppComponent;
 import com.entrevista.ifood2.dagger.component.DaggerDetailComponent;
 import com.entrevista.ifood2.dagger.component.DetailComponent;
 import com.entrevista.ifood2.dagger.module.DetailModule;
@@ -56,8 +57,6 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
     @Inject
     ProductDetailPresenterImpl mPresenter;
 
-    @Inject
-    Repository mRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +98,9 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
     }
 
     private void initComponent() {
+        AppComponent appComponent = ((App) getApplication()).getAppComponent();
         DetailComponent component = DaggerDetailComponent.builder()
-                .appComponent(((App) getApplication()).getAppComponent())
+                .appComponent(appComponent)
                 .detailModule(new DetailModule(this))
                 .build();
         component.inject(this);

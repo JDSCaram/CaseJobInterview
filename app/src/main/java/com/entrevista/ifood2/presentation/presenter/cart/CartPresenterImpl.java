@@ -1,13 +1,13 @@
 package com.entrevista.ifood2.presentation.presenter.cart;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.entrevista.ifood2.network.ServiceMapper;
 import com.entrevista.ifood2.network.bean.CheckoutRequest;
 import com.entrevista.ifood2.network.bean.CheckoutResponse;
 import com.entrevista.ifood2.network.bean.Menu;
 import com.entrevista.ifood2.network.bean.PaymentMethod;
-import com.entrevista.ifood2.repository.RepositoryImpl;
+import com.entrevista.ifood2.repository.Repository;
 import com.entrevista.ifood2.repository.model.Product;
 import com.entrevista.ifood2.repository.model.Restaurant;
 import com.entrevista.ifood2.repository.model.RestaurantAndProducts;
@@ -16,6 +16,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+
+import javax.inject.Inject;
 
 import io.reactivex.Maybe;
 import io.reactivex.MaybeObserver;
@@ -35,16 +37,14 @@ public class CartPresenterImpl implements CartPresenter {
     private static final String TAG_LOG_PRESENTER = CartPresenterImpl.class.getSimpleName();
 
     private CartView mView;
-    private RepositoryImpl repository;
+    private Repository repository;
 
-    public CartPresenterImpl(RepositoryImpl repository) {
+    @Inject
+    public CartPresenterImpl(Repository repository, CartView view) {
         this.repository = repository;
+        this.mView = view;
     }
 
-    @Override
-    public void setView(@NonNull CartView view) {
-        mView = view;
-    }
 
     @Override
     public void onDestroy() {
@@ -99,7 +99,7 @@ public class CartPresenterImpl implements CartPresenter {
         mView.showProgress();
 
 
-        repository.beginRemote().getServices().getPaymentMethods()
+        repository.beginRemote().getRetrofit().create(ServiceMapper.class).getPaymentMethods()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<PaymentMethod>>() {
@@ -143,7 +143,8 @@ public class CartPresenterImpl implements CartPresenter {
         request.setMenus(iniProductRequest(mCurrentProducts));
         request.setMethod(mCurrentMethod);
 
-        repository.beginRemote().getServices().checkout(request)
+        repository.beginRemote().getRetrofit().create(ServiceMapper.class)
+                .checkout(request)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<CheckoutResponse>() {
@@ -230,7 +231,7 @@ public class CartPresenterImpl implements CartPresenter {
                     public void accept(@io.reactivex.annotations.NonNull Integer integer) throws Exception {
                         mView.hideProgress();
                         Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Produtos: " + integer);
-                        if(integer > 0 )
+                        if (integer > 0)
                             mView.updateUi();
                     }
                 });

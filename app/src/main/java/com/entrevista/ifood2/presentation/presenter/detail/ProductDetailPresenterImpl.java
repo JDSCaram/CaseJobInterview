@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.entrevista.ifood2.network.bean.CheckoutRequest;
 import com.entrevista.ifood2.network.bean.Menu;
+import com.entrevista.ifood2.repository.Repository;
 import com.entrevista.ifood2.repository.RepositoryImpl;
 import com.entrevista.ifood2.repository.model.Product;
 import com.entrevista.ifood2.repository.model.Restaurant;
@@ -38,11 +39,11 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
 
     private static final String TAG_LOG_PRESENTER = ProductDetailPresenterImpl.class.getSimpleName();
     private ProductDetailView mView;
-    private RepositoryImpl repository;
+    private Repository repository;
     private CompositeDisposable mCompositeDisposable;
 
     @Inject
-    public ProductDetailPresenterImpl(RepositoryImpl repository, ProductDetailView mView) {
+    public ProductDetailPresenterImpl(Repository repository, ProductDetailView mView) {
         this.mView = mView;
         this.repository = repository;
         mCompositeDisposable = new CompositeDisposable();
