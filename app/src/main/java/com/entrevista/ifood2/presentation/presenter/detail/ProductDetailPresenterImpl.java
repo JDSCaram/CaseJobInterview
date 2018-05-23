@@ -1,6 +1,7 @@
 package com.entrevista.ifood2.presentation.presenter.detail;
 
 import android.arch.persistence.room.EmptyResultSetException;
+import android.os.Handler;
 import android.util.Log;
 
 import com.entrevista.ifood2.network.bean.CheckoutRequest;
@@ -92,13 +93,15 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
 
         mCompositeDisposable.add(Observable.fromCallable(() ->
                 repository.beginLocal().getDatabase()
-                        .productDao()
-                        .deleteAllProducts())
+                        .restaurantDao()
+                        .deleteAllRestaurants())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(integer -> {
                     Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Produtos: " + integer);
                     mView.successCleanCart();
+                }, error ->{
+                    Log.i(TAG_LOG_PRESENTER, error.getMessage(), error);
                 }));
 
 
@@ -106,6 +109,7 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
 
 
     private void insertProductOrUpdate(final Product product, final Restaurant restaurant) {
+
         Single<Product> observable = repository.beginLocal().getDatabase().productDao().getProductById(product.getId());
         mCompositeDisposable.add(observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -123,7 +127,7 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
         double amount = newProduct.getAmount() + oldProduct.getAmount();
         newProduct.setQuantity(quantity);
         newProduct.setAmount(amount);
-        newProduct.setUid(oldProduct.getUid());
+        newProduct.setId(oldProduct.getId());
 
         mCompositeDisposable.add(Observable.fromCallable(() ->
                 repository.beginLocal().getDatabase()

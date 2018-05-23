@@ -1,19 +1,17 @@
 package com.entrevista.ifood2.presentation.presenter.menu;
 
-import android.support.annotation.NonNull;
-
 import com.entrevista.ifood2.network.ServiceMapper;
 import com.entrevista.ifood2.network.bean.Menu;
 import com.entrevista.ifood2.repository.Repository;
-import com.entrevista.ifood2.repository.RepositoryImpl;
 
 import java.net.UnknownHostException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -24,20 +22,19 @@ public class MenuPresenterImpl implements MenuPresenter {
 
     private MenuView mView;
     private Repository repository;
+    private CompositeDisposable mCompositeDisposable;
 
-
-    public MenuPresenterImpl(RepositoryImpl repository) {
+    @Inject
+    public MenuPresenterImpl(Repository repository, MenuView view) {
         this.repository = repository;
-    }
-
-    @Override
-    public void setView(@NonNull MenuView view) {
-        mView = view;
+        this.mView = view;
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     @Override
     public void onDestroy() {
         mView = null;
+        mCompositeDisposable.clear();
     }
 
     @Override
@@ -50,39 +47,33 @@ public class MenuPresenterImpl implements MenuPresenter {
         if (!isViewAttached()) return;
         mView.showProgress();
 
-        Observable<List<Menu>> observable = repository.beginRemote().getServices().getMenu(id);
-        observable.subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<Menu>>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-                    }
+        Observable<List<Menu>> observable = repository.beginRemote()
+                .getRetrofit().create(ServiceMapper.class)
+                .getMenu(id);
 
-                    @Override
-                    public void onNext(@io.reactivex.annotations.NonNull List<Menu> menuResponses) {
-                        if (!isViewAttached()) return;
-                        mView.hideProgress();
+        mCompositeDisposable.add(
+                observable.subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::returnMenuToView, this::returnErrorToView));
 
-                        if (menuResponses != null)
-                            mView.loadMenus(menuResponses);
-                    }
+    }
 
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        if (!isViewAttached()) return;
-                        mView.hideProgress();
+    private void returnErrorToView(Throwable e) {
+        if (!isViewAttached()) return;
+        mView.hideProgress();
 
-                        if (e instanceof UnknownHostException) {
-                                mView.showTryAgain();
-                        } else {
-                            mView.showErrorMessage(e.getMessage());
-                        }
-                    }
+        if (e instanceof UnknownHostException) {
+            mView.showTryAgain();
+        } else {
+            mView.showErrorMessage(e.getMessage());
+        }
+    }
 
-                    @Override
-                    public void onComplete() {
-                    }
-                });
+    private void returnMenuToView(List<Menu> menus) {
+        if (!isViewAttached()) return;
+        mView.hideProgress();
 
+        if (menus != null)
+            mView.loadMenus(menus);
     }
 }

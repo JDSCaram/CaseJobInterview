@@ -1,6 +1,5 @@
 package com.entrevista.ifood2.presentation.ui.restaurants;
 
-import android.content.DialogInterface;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,19 +11,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.entrevista.ifood2.App;
 import com.entrevista.ifood2.R;
+import com.entrevista.ifood2.dagger.component.DaggerRestaurantComponent;
+import com.entrevista.ifood2.dagger.module.RestaurantModule;
 import com.entrevista.ifood2.network.bean.Restaurant;
-import com.entrevista.ifood2.presentation.presenter.restaurants.RestaurantPresenter;
 import com.entrevista.ifood2.presentation.presenter.restaurants.RestaurantPresenterImpl;
 import com.entrevista.ifood2.presentation.presenter.restaurants.RestaurantView;
 import com.entrevista.ifood2.presentation.ui.MainActivity;
 import com.entrevista.ifood2.presentation.ui.menu.MenuFragment;
-import com.entrevista.ifood2.repository.RepositoryImpl;
-import com.entrevista.ifood2.repository.data.LocalData;
-import com.entrevista.ifood2.repository.data.RemoteData;
 import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by JCARAM on 05/10/2017.
@@ -33,11 +33,13 @@ import java.util.List;
 public class RestaurantFragment extends Fragment implements RestaurantView, RestaurantAdapter.OnRestaurantClickListener {
 
     private Location mCurrentLocation;
-    private RestaurantPresenter mPresenter;
     private RecyclerView mRecyclerView;
     private RestaurantAdapter mAdapter;
     private AlertDialog mProgress;
     private View mEmptyView;
+
+    @Inject
+    RestaurantPresenterImpl mPresenter;
 
 
     @Nullable
@@ -51,8 +53,17 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
         if (bundle != null)
             mCurrentLocation = bundle.getParcelable("LOCATION");
 
+        initComponent();
         afterViews();
         return view;
+    }
+
+    private void initComponent() {
+
+        DaggerRestaurantComponent.builder()
+                .appComponent(((App) getActivity().getApplication()).getAppComponent())
+                .restaurantModule(new RestaurantModule(this))
+                .build().inject(this);
     }
 
     private void afterViews() {
@@ -60,18 +71,13 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
         mAdapter.setOnItemClickListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(mAdapter);
-        mPresenter = new RestaurantPresenterImpl(RepositoryImpl.getInstance(new LocalData(), new RemoteData()));
-        mPresenter.setView(this);
 
         if (mCurrentLocation != null)
             mPresenter.getRestaurants(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
         else
-            ((MainActivity)getActivity()).setLocationListener(new LocationListener() {
-                @Override
-                public void locationChanged(Location location) {
-                    mCurrentLocation = location;
-                    mPresenter.getRestaurants(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-                }
+            ((MainActivity) getActivity()).setLocationListener(location -> {
+                mCurrentLocation = location;
+                mPresenter.getRestaurants(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
             });
     }
 
@@ -115,17 +121,12 @@ public class RestaurantFragment extends Fragment implements RestaurantView, Rest
                 getString(R.string.error_connection),
                 getString(R.string.try_again),
                 getString(R.string.no),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (mCurrentLocation != null)
-                            mPresenter.getRestaurants(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-                    }
-                }, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        getActivity().finish();
-                    }
+                (dialogInterface, i) -> {
+                    if (mCurrentLocation != null)
+                        mPresenter.getRestaurants(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                }, (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                    getActivity().finish();
                 }).show();
     }
 

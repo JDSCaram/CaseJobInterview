@@ -30,7 +30,6 @@ import com.entrevista.ifood2.network.bean.CheckoutRequest;
 import com.entrevista.ifood2.presentation.presenter.detail.ProductDetailPresenterImpl;
 import com.entrevista.ifood2.presentation.presenter.detail.ProductDetailView;
 import com.entrevista.ifood2.presentation.ui.cart.CartActivity;
-import com.entrevista.ifood2.repository.Repository;
 import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;

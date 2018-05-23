@@ -17,10 +17,9 @@ import android.arch.persistence.room.PrimaryKey;
                 onDelete = ForeignKey.CASCADE))
 public class Product {
 
-    @PrimaryKey(autoGenerate = true)
-    public int uid;
-
+    @PrimaryKey
     public int id;
+
     public String name;
     public int quantity;
     public double amount;
@@ -55,13 +54,6 @@ public class Product {
         setRestaurantId(builder.restaurantId);
     }
 
-    public int getUid() {
-        return uid;
-    }
-
-    public void setUid(int uid) {
-        this.uid = uid;
-    }
 
     public int getId() {
         return id;
