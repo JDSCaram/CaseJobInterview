@@ -1,6 +1,5 @@
 package com.entrevista.ifood2.presentation.ui.detail;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,15 +20,16 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.entrevista.ifood2.App;
 import com.entrevista.ifood2.R;
+import com.entrevista.ifood2.dagger.component.AppComponent;
+import com.entrevista.ifood2.dagger.component.DaggerDetailComponent;
+import com.entrevista.ifood2.dagger.component.DetailComponent;
+import com.entrevista.ifood2.dagger.module.DetailModule;
 import com.entrevista.ifood2.network.bean.CheckoutRequest;
-import com.entrevista.ifood2.presentation.presenter.detail.ProductDetailPresenter;
 import com.entrevista.ifood2.presentation.presenter.detail.ProductDetailPresenterImpl;
 import com.entrevista.ifood2.presentation.presenter.detail.ProductDetailView;
 import com.entrevista.ifood2.presentation.ui.cart.CartActivity;
-import com.entrevista.ifood2.repository.RepositoryImpl;
-import com.entrevista.ifood2.repository.data.LocalData;
-import com.entrevista.ifood2.repository.data.RemoteData;
 import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
@@ -38,6 +38,8 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
+
+import javax.inject.Inject;
 
 public class DetailActivity extends AppCompatActivity implements ProductDetailView {
 
@@ -49,8 +51,11 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
     private Button mAddCart;
     private ImageButton mAdd, mRemove;
     private BigDecimal mValues;
-    private ProductDetailPresenter mPresenter;
     private AlertDialog mProgress;
+
+    @Inject
+    ProductDetailPresenterImpl mPresenter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,8 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
         setContentView(R.layout.activity_detail);
         Toolbar mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+
+        initComponent();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
@@ -78,21 +85,25 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
         mToolbarLayout = findViewById(R.id.toolbar_layout);
         mUnitValue = findViewById(R.id.unit_value);
 
-        mPresenter = new ProductDetailPresenterImpl(RepositoryImpl.getInstance(new LocalData(), new RemoteData()));
-        mPresenter.setView(this);
-
-        mAppbarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) {
-                    mToolbarLayout.setTitle(mCheckout.getRestaurant().getName());
-                } else {
-                    mToolbarLayout.setTitle("");
-                }
+        mAppbarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) {
+                mToolbarLayout.setTitle(mCheckout.getRestaurant().getName());
+            } else {
+                mToolbarLayout.setTitle("");
             }
         });
 
         afterViews();
+    }
+
+    private void initComponent() {
+        AppComponent appComponent = ((App) getApplication()).getAppComponent();
+        DetailComponent component = DaggerDetailComponent.builder()
+                .appComponent(appComponent)
+                .detailModule(new DetailModule(this))
+                .build();
+        component.inject(this);
+
     }
 
     private void afterViews() {
@@ -115,28 +126,17 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
         mUnitValue.setText(format.format(unitValueFixo));
         mCheckout.getMenus().get(0).setQuantity(QUANTITY_MIN);
 
-        mAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int quantity = Integer.parseInt(mQuantity.getText().toString());
-                calculeValue(quantity + 1);
-            }
+        mAdd.setOnClickListener(view -> {
+            int quantity = Integer.parseInt(mQuantity.getText().toString());
+            calculeValue(quantity + 1);
         });
 
-        mRemove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int quantity = Integer.parseInt(mQuantity.getText().toString());
-                calculeValue(quantity - 1);
-            }
+        mRemove.setOnClickListener(view -> {
+            int quantity = Integer.parseInt(mQuantity.getText().toString());
+            calculeValue(quantity - 1);
         });
 
-        mAddCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addToCart();
-            }
-        });
+        mAddCart.setOnClickListener(view -> addToCart());
 
     }
 
@@ -220,17 +220,9 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
         AlertDialogBuilder.alertDialogWithButtonConfirmAndCancel(this,
                 getString(R.string.already_exists),
                 getString(R.string.clear),
-                getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        mPresenter.cleanCart(checkoutRequest);
-                    }
-                }, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                }).show();
+                getString(R.string.no), (dialogInterface, i) -> mPresenter.cleanCart(checkoutRequest),
+                (dialogInterface, i) -> dialogInterface.dismiss())
+                .show();
     }
 
     @Override
@@ -261,12 +253,7 @@ public class DetailActivity extends AppCompatActivity implements ProductDetailVi
 
         final MenuItem menuItem = menu.findItem(R.id.cart);
         View view = menuItem.getActionView();
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onOptionsItemSelected(menuItem);
-            }
-        });
+        view.setOnClickListener(view1 -> onOptionsItemSelected(menuItem));
         return true;
     }
 }

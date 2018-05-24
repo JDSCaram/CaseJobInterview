@@ -13,8 +13,8 @@ import java.util.List;
 
 @Entity(indices = {@Index(value = {"id"}, unique = true)})
 public class Restaurant {
-    @PrimaryKey(autoGenerate = true)
-    public int uid;
+
+    @PrimaryKey
     public int id;
 
     public String name;
@@ -41,13 +41,6 @@ public class Restaurant {
         setProducts(builder.products);
     }
 
-    public int getUid() {
-        return uid;
-    }
-
-    public void setUid(int uid) {
-        this.uid = uid;
-    }
 
     public int getId() {
         return id;

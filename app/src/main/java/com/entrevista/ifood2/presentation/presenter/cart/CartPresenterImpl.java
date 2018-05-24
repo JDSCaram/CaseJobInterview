@@ -1,13 +1,12 @@
 package com.entrevista.ifood2.presentation.presenter.cart;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.entrevista.ifood2.network.ServiceMapper;
 import com.entrevista.ifood2.network.bean.CheckoutRequest;
-import com.entrevista.ifood2.network.bean.CheckoutResponse;
 import com.entrevista.ifood2.network.bean.Menu;
 import com.entrevista.ifood2.network.bean.PaymentMethod;
-import com.entrevista.ifood2.repository.RepositoryImpl;
+import com.entrevista.ifood2.repository.Repository;
 import com.entrevista.ifood2.repository.model.Product;
 import com.entrevista.ifood2.repository.model.Restaurant;
 import com.entrevista.ifood2.repository.model.RestaurantAndProducts;
@@ -15,15 +14,13 @@ import com.entrevista.ifood2.repository.model.RestaurantAndProducts;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
+
+import javax.inject.Inject;
 
 import io.reactivex.Maybe;
-import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -35,20 +32,21 @@ public class CartPresenterImpl implements CartPresenter {
     private static final String TAG_LOG_PRESENTER = CartPresenterImpl.class.getSimpleName();
 
     private CartView mView;
-    private RepositoryImpl repository;
+    private Repository repository;
+    private CompositeDisposable mCompositeDisposable;
 
-    public CartPresenterImpl(RepositoryImpl repository) {
+    @Inject
+    public CartPresenterImpl(Repository repository, CartView view) {
         this.repository = repository;
+        this.mView = view;
+        this.mCompositeDisposable = new CompositeDisposable();
     }
 
-    @Override
-    public void setView(@NonNull CartView view) {
-        mView = view;
-    }
 
     @Override
     public void onDestroy() {
         mView = null;
+        mCompositeDisposable.clear();
     }
 
     @Override
@@ -64,71 +62,39 @@ public class CartPresenterImpl implements CartPresenter {
         mView.showProgress();
 
         Maybe<RestaurantAndProducts> observable = repository.beginLocal().getDatabase().restaurantDao().getProductsForRestaurant();
-        observable.subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new MaybeObserver<RestaurantAndProducts>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-                    }
+        mCompositeDisposable.add(
+                observable.subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::returnToView, error -> {
+                            if (!isViewAttached()) return;
+                            mView.hideProgress();
+                        }, () -> returnToView(new RestaurantAndProducts())));
 
-                    @Override
-                    public void onSuccess(@io.reactivex.annotations.NonNull RestaurantAndProducts restaurantAndProducts) {
-                        if (!isViewAttached()) return;
-                        mView.hideProgress();
-                        mView.loadProducts(restaurantAndProducts);
-                    }
+    }
 
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        if (!isViewAttached()) return;
-                        mView.hideProgress();
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        if (!isViewAttached()) return;
-                        mView.hideProgress();
-                        mView.loadProducts(new RestaurantAndProducts());
-                    }
-                });
-
+    private void returnToView(RestaurantAndProducts restaurantAndProducts) {
+        if (!isViewAttached()) return;
+        mView.hideProgress();
+        mView.loadProducts(restaurantAndProducts);
     }
 
     @Override
     public void getMethodPayments() {
         mView.showProgress();
 
-
-        repository.beginRemote().getServices().getPaymentMethods()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<PaymentMethod>>() {
-                               @Override
-                               public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
-                               }
-
-                               @Override
-                               public void onNext(@io.reactivex.annotations.NonNull List<PaymentMethod> paymentMethods) {
-                                   if (!isViewAttached()) return;
-                                   mView.hideProgress();
-                                   mView.loadMethodPayments(paymentMethods);
-                               }
-
-                               @Override
-                               public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                                   if (!isViewAttached()) return;
-                                   mView.hideProgress();
-                                   mView.showErrorMessage(e.getMessage());
-
-                               }
-
-                               @Override
-                               public void onComplete() {
-
-                               }
-                           }
-                );
+        mCompositeDisposable.add(
+                repository.beginRemote().getRetrofit().create(ServiceMapper.class).getPaymentMethods()
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(paymentMethods -> {
+                            if (!isViewAttached()) return;
+                            mView.hideProgress();
+                            mView.loadMethodPayments(paymentMethods);
+                        }, error -> {
+                            if (!isViewAttached()) return;
+                            mView.hideProgress();
+                            mView.showErrorMessage(error.getMessage());
+                        }));
     }
 
     @Override
@@ -143,117 +109,68 @@ public class CartPresenterImpl implements CartPresenter {
         request.setMenus(iniProductRequest(mCurrentProducts));
         request.setMethod(mCurrentMethod);
 
-        repository.beginRemote().getServices().checkout(request)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<CheckoutResponse>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+        mCompositeDisposable.add(
+                repository.beginRemote().getRetrofit().create(ServiceMapper.class)
+                        .checkout(request)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(checkoutResponse -> {
+                            if (!isViewAttached()) return;
+                            mView.hideProgress();
 
-                    }
-
-                    @Override
-                    public void onNext(@io.reactivex.annotations.NonNull CheckoutResponse checkoutResponse) {
-                        if (!isViewAttached()) return;
-                        mView.hideProgress();
-
-                        if (checkoutResponse.getStatus().contains("SUCCESS")) {
-                            mView.checkoutSuccess(checkoutResponse);
-                        } else {
-                            mView.showErrorMessage();
-                        }
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        if (!isViewAttached()) return;
-                        mView.hideProgress();
-                        if (e instanceof UnknownHostException) {
-                            mView.showTryAgain();
-                        } else {
-                            mView.showErrorMessage(e.getMessage());
-                        }
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-
+                            if (checkoutResponse.getStatus().contains("SUCCESS")) {
+                                mView.checkoutSuccess(checkoutResponse);
+                            } else {
+                                mView.showErrorMessage();
+                            }
+                        }, error -> {
+                            if (!isViewAttached()) return;
+                            mView.hideProgress();
+                            if (error instanceof UnknownHostException) {
+                                mView.showTryAgain();
+                            } else {
+                                mView.showErrorMessage(error.getMessage());
+                            }
+                        }));
     }
+
 
     @Override
     public void cleanCart() {
-        Observable.fromCallable(new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                return repository.beginLocal().getDatabase().productDao().deleteAllProducts();
-            }
-        }).subscribeOn(Schedulers.io())
+        mCompositeDisposable.add(Observable.fromCallable(() -> repository.beginLocal().getDatabase().productDao().deleteAllProducts()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Integer>() {
-                    @Override
-                    public void accept(@io.reactivex.annotations.NonNull Integer integer) throws Exception {
-                        Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Produtos: " + integer);
-                    }
-                });
+                .subscribe(integer -> Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Produtos: " + integer)));
 
-        Observable.fromCallable(new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                return repository.beginLocal().getDatabase().restaurantDao().deleteAllRestaurants();
-            }
-        }).subscribeOn(Schedulers.io())
+        mCompositeDisposable.add(Observable.fromCallable(() -> repository.beginLocal().getDatabase().restaurantDao().deleteAllRestaurants()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Integer>() {
-                    @Override
-                    public void accept(@io.reactivex.annotations.NonNull Integer integer) throws Exception {
-                        Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Restaurante: " + integer);
-                        mView.successCleanCart();
-                    }
-                });
+                .subscribe(integer -> {
+                    Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Restaurante: " + integer);
+                    mView.successCleanCart();
+                }));
     }
 
     @Override
     public void removeProduct(final Product item) {
         mView.showProgress();
-        Observable.fromCallable(new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                return repository.beginLocal().getDatabase().productDao().deleteProductById(item);
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Integer>() {
-                    @Override
-                    public void accept(@io.reactivex.annotations.NonNull Integer integer) throws Exception {
-                        mView.hideProgress();
-                        Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Produtos: " + integer);
-                        if(integer > 0 )
-                            mView.updateUi();
-                    }
-                });
+        mCompositeDisposable.add(
+                Observable.fromCallable(() -> repository.beginLocal().getDatabase().productDao().deleteProductById(item)).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(integer -> {
+                            mView.hideProgress();
+                            Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Produtos: " + integer);
+                            if (integer > 0)
+                                mView.updateUi();
+                        }));
 
     }
 
     @Override
     public void updateItemCart(final Product product) {
         mView.showProgress();
-
-        Observable.fromCallable(new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                return repository.beginLocal().getDatabase().productDao().updateProductById(product);
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Integer>() {
-                    @Override
-                    public void accept(@io.reactivex.annotations.NonNull Integer integer) throws Exception {
-                        mView.hideProgress();
-                    }
-                });
+        mCompositeDisposable.add(
+                Observable.fromCallable(() -> repository.beginLocal().getDatabase().productDao().updateProductById(product)).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(integer -> mView.hideProgress()));
 
     }
 

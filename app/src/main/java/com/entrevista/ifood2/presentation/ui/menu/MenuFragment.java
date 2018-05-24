@@ -15,7 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.entrevista.ifood2.App;
 import com.entrevista.ifood2.R;
+import com.entrevista.ifood2.dagger.component.DaggerMenuComponent;
+import com.entrevista.ifood2.dagger.component.MenuComponent;
+import com.entrevista.ifood2.dagger.module.MenuModule;
 import com.entrevista.ifood2.presentation.presenter.menu.MenuPresenter;
 import com.entrevista.ifood2.presentation.presenter.menu.MenuPresenterImpl;
 import com.entrevista.ifood2.presentation.presenter.menu.MenuView;
@@ -32,6 +36,8 @@ import com.entrevista.ifood2.toolbox.AlertDialogBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by JCARAM on 05/10/2017.
  */
@@ -41,18 +47,28 @@ public class MenuFragment extends Fragment implements MenuView, MenuAdapter.OnMe
     private RecyclerView mRecyclerView;
     private MenuAdapter mAdapter;
     private Restaurant currentRestaurant;
-    private MenuPresenter mPresenter;
     private AlertDialog mProgress;
+
+    @Inject
+    MenuPresenterImpl mPresenter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
         mRecyclerView = view.findViewById(R.id.recycler_view);
-        mPresenter = new MenuPresenterImpl(RepositoryImpl.getInstance(new LocalData(), new RemoteData())); //inicializa o mPresenter
 
+        initComponent();
         afterViews();
         return view;
+    }
+
+    private void initComponent() {
+        DaggerMenuComponent.builder()
+                .appComponent(((App) getActivity().getApplication()).getAppComponent())
+                .menuModule(new MenuModule(this))
+                .build()
+                .inject(this);
     }
 
     private void afterViews() {
@@ -60,7 +76,7 @@ public class MenuFragment extends Fragment implements MenuView, MenuAdapter.OnMe
         mAdapter = new MenuAdapter(getContext());
         mAdapter.setOnMenuClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
-       getMenu();
+        getMenu();
 
     }
 
@@ -68,8 +84,7 @@ public class MenuFragment extends Fragment implements MenuView, MenuAdapter.OnMe
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             currentRestaurant = (Restaurant) bundle.getSerializable(Restaurant.class.getSimpleName());
-            mPresenter.setView(this);
-            mPresenter.getMenus(currentRestaurant.getId());
+            mPresenter.getMenus(currentRestaurant != null ? currentRestaurant.getId() : 0);
         }
     }
 
@@ -116,7 +131,7 @@ public class MenuFragment extends Fragment implements MenuView, MenuAdapter.OnMe
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                      getMenu();
+                        getMenu();
                     }
                 }, new DialogInterface.OnClickListener() {
                     @Override

@@ -20,7 +20,12 @@ import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.entrevista.ifood2.App;
 import com.entrevista.ifood2.R;
+import com.entrevista.ifood2.dagger.component.CartComponent;
+import com.entrevista.ifood2.dagger.component.DaggerCartComponent;
+import com.entrevista.ifood2.dagger.module.CartModule;
+import com.entrevista.ifood2.dagger.module.DetailModule;
 import com.entrevista.ifood2.network.bean.CheckoutResponse;
 import com.entrevista.ifood2.network.bean.PaymentMethod;
 import com.entrevista.ifood2.presentation.presenter.cart.CartPresenter;
@@ -40,10 +45,14 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 public class CartActivity extends AppCompatActivity implements CartView, CartAdapter.OnProductItemClick, View.OnClickListener {
 
     private View mEmptyView, mContainerView, mDeliveryLayout;
-    private CartPresenter mPresenter;
+
+    @Inject
+    CartPresenterImpl mPresenter;
 
     private SimpleDraweeView mRestaurantImage;
     private TextView mName, mDescription, mDeliveryFeeTotal, mAmountTotal;
@@ -83,10 +92,16 @@ public class CartActivity extends AppCompatActivity implements CartView, CartAda
         mDeliveryLayout = findViewById(R.id.delivery_fee_container);
 
         mDeliveryLayout.setVisibility(View.GONE);
-        mPresenter = new CartPresenterImpl(RepositoryImpl.getInstance(new LocalData(), new RemoteData()));
-        mPresenter.setView(this);
         mBtMethodPayment.setOnClickListener(this);
+        initComponent();
         afterViews();
+    }
+
+    private void initComponent() {
+        DaggerCartComponent.builder()
+                .appComponent(((App) getApplication()).getAppComponent())
+                .cartModule(new CartModule(this))
+                .build().inject(this);
     }
 
     private void afterViews() {

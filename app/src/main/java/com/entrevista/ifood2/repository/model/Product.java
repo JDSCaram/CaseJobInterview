@@ -16,10 +16,9 @@ import android.arch.persistence.room.PrimaryKey;
                 childColumns = "restaurantId"))
 public class Product {
 
-    @PrimaryKey(autoGenerate = true)
-    public int uid;
-
+    @PrimaryKey
     public int id;
+
     public String name;
     public int quantity;
     public double amount;
@@ -32,7 +31,7 @@ public class Product {
     public int restaurantId;
 
     public Product(int id, String name, int quantity, double amount, double unitAmount,
-                   String urlImage, String description,  int restaurantId) {
+                   String urlImage, String description, int restaurantId) {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
@@ -54,13 +53,6 @@ public class Product {
         setRestaurantId(builder.restaurantId);
     }
 
-    public int getUid() {
-        return uid;
-    }
-
-    public void setUid(int uid) {
-        this.uid = uid;
-    }
 
     public int getId() {
         return id;
