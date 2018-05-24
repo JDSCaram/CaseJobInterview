@@ -7,7 +7,6 @@ import android.util.Log;
 import com.entrevista.ifood2.network.bean.CheckoutRequest;
 import com.entrevista.ifood2.network.bean.Menu;
 import com.entrevista.ifood2.repository.Repository;
-import com.entrevista.ifood2.repository.RepositoryImpl;
 import com.entrevista.ifood2.repository.model.Product;
 import com.entrevista.ifood2.repository.model.Restaurant;
 
@@ -18,19 +17,12 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 
 import io.reactivex.Maybe;
-import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.Single;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-
-import static android.support.constraint.Constraints.TAG;
 
 /**
  * Created by JCARAM on 05/10/2017.
@@ -99,18 +91,28 @@ public class ProductDetailPresenterImpl implements ProductDetailPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(integer -> {
                     Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Produtos: " + integer);
-                    mView.successCleanCart();
-                }, error ->{
+                    cleanRestaurant();
+                }, error -> {
                     Log.i(TAG_LOG_PRESENTER, error.getMessage(), error);
                 }));
 
 
     }
 
+    private void cleanRestaurant() {
+        mCompositeDisposable.add(Observable.fromCallable(() -> repository.beginLocal().getDatabase().restaurantDao().deleteAllRestaurants()).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(integer -> {
+                    Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Restaurante: " + integer);
+                    mView.successCleanCart();
+                }));
+    }
+
 
     private void insertProductOrUpdate(final Product product, final Restaurant restaurant) {
 
-        Single<Product> observable = repository.beginLocal().getDatabase().productDao().getProductById(product.getId());
+        Single<Product> observable = repository.beginLocal().getDatabase().productDao()
+                .getProductById(product.getId());
         mCompositeDisposable.add(observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(productBase -> {

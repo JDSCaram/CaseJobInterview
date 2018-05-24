@@ -13,8 +13,7 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity(indices = {@Index(value = {"id"}, unique = true)},
         foreignKeys = @ForeignKey(entity = Restaurant.class,
                 parentColumns = "id",
-                childColumns = "restaurantId",
-                onDelete = ForeignKey.CASCADE))
+                childColumns = "restaurantId"))
 public class Product {
 
     @PrimaryKey

@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.entrevista.ifood2.network.ServiceMapper;
 import com.entrevista.ifood2.network.bean.CheckoutRequest;
-import com.entrevista.ifood2.network.bean.CheckoutResponse;
 import com.entrevista.ifood2.network.bean.Menu;
 import com.entrevista.ifood2.network.bean.PaymentMethod;
 import com.entrevista.ifood2.repository.Repository;
@@ -15,18 +14,13 @@ import com.entrevista.ifood2.repository.model.RestaurantAndProducts;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
 import io.reactivex.Maybe;
-import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -143,75 +137,40 @@ public class CartPresenterImpl implements CartPresenter {
 
     @Override
     public void cleanCart() {
-        Observable.fromCallable(new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                return repository.beginLocal().getDatabase().productDao().deleteAllProducts();
-            }
-        }).subscribeOn(Schedulers.io())
+        mCompositeDisposable.add(Observable.fromCallable(() -> repository.beginLocal().getDatabase().productDao().deleteAllProducts()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Integer>() {
-                    @Override
-                    public void accept(@io.reactivex.annotations.NonNull Integer integer) throws Exception {
-                        Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Produtos: " + integer);
-                    }
-                });
+                .subscribe(integer -> Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Produtos: " + integer)));
 
-        Observable.fromCallable(new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                return repository.beginLocal().getDatabase().restaurantDao().deleteAllRestaurants();
-            }
-        }).subscribeOn(Schedulers.io())
+        mCompositeDisposable.add(Observable.fromCallable(() -> repository.beginLocal().getDatabase().restaurantDao().deleteAllRestaurants()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Integer>() {
-                    @Override
-                    public void accept(@io.reactivex.annotations.NonNull Integer integer) throws Exception {
-                        Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Restaurante: " + integer);
-                        mView.successCleanCart();
-                    }
-                });
+                .subscribe(integer -> {
+                    Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Restaurante: " + integer);
+                    mView.successCleanCart();
+                }));
     }
 
     @Override
     public void removeProduct(final Product item) {
         mView.showProgress();
-        Observable.fromCallable(new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                return repository.beginLocal().getDatabase().productDao().deleteProductById(item);
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Integer>() {
-                    @Override
-                    public void accept(@io.reactivex.annotations.NonNull Integer integer) throws Exception {
-                        mView.hideProgress();
-                        Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Produtos: " + integer);
-                        if (integer > 0)
-                            mView.updateUi();
-                    }
-                });
+        mCompositeDisposable.add(
+                Observable.fromCallable(() -> repository.beginLocal().getDatabase().productDao().deleteProductById(item)).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(integer -> {
+                            mView.hideProgress();
+                            Log.i(TAG_LOG_PRESENTER, "Numero de linhas apagadas em Produtos: " + integer);
+                            if (integer > 0)
+                                mView.updateUi();
+                        }));
 
     }
 
     @Override
     public void updateItemCart(final Product product) {
         mView.showProgress();
-
-        Observable.fromCallable(new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                return repository.beginLocal().getDatabase().productDao().updateProductById(product);
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Integer>() {
-                    @Override
-                    public void accept(@io.reactivex.annotations.NonNull Integer integer) throws Exception {
-                        mView.hideProgress();
-                    }
-                });
+        mCompositeDisposable.add(
+                Observable.fromCallable(() -> repository.beginLocal().getDatabase().productDao().updateProductById(product)).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(integer -> mView.hideProgress()));
 
     }
 
